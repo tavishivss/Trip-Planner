@@ -76,7 +76,7 @@ function DashboardHeader() {
 
 function EmptyState() {
   return (
-    <div className="flex min-h-[calc(100vh-104px)] flex-col items-center justify-center px-5 py-10 text-center sm:px-8">
+    <div className="empty-state-map flex min-h-[calc(100vh-104px)] flex-col items-center justify-center px-5 py-10 text-center sm:px-8">
       <svg className="mb-5 h-16 w-16 opacity-60" viewBox="0 0 80 80" fill="none" aria-hidden="true">
         <circle cx="40" cy="40" r="36" stroke="#d1d5db" strokeWidth="2" fill="none" />
         <path d="M25 50L40 20L55 50H25Z" stroke="#9ca3af" strokeWidth="2" fill="none" />
@@ -90,25 +90,6 @@ function EmptyState() {
       <p className="mt-3 max-w-xl text-sm leading-6 text-slate-600 sm:text-base">
         Enter your trip details on the left to generate an HOS-compliant route with ELD daily log sheets.
       </p>
-
-      <div className="mt-7 grid w-full max-w-2xl gap-3 sm:grid-cols-2">
-        <div className="rounded-xl border border-slate-100 bg-white p-4 text-left shadow-[0_8px_18px_rgba(15,23,42,0.04)] transition duration-200 hover:-translate-y-0.5 hover:border-blue-100 hover:shadow-[0_14px_30px_rgba(15,23,42,0.08)]">
-          <strong className="block text-sm font-semibold text-slate-950">Route Planning</strong>
-          <span className="mt-2 block text-xs leading-5 text-slate-400">Optimized routes with mandatory stops</span>
-        </div>
-        <div className="rounded-xl border border-slate-100 bg-white p-4 text-left shadow-[0_8px_18px_rgba(15,23,42,0.04)] transition duration-200 hover:-translate-y-0.5 hover:border-blue-100 hover:shadow-[0_14px_30px_rgba(15,23,42,0.08)]">
-          <strong className="block text-sm font-semibold text-slate-950">HOS Compliance</strong>
-          <span className="mt-2 block text-xs leading-5 text-slate-400">11hr drive / 14hr window / 70hr cycle</span>
-        </div>
-        <div className="rounded-xl border border-slate-100 bg-white p-4 text-left shadow-[0_8px_18px_rgba(15,23,42,0.04)] transition duration-200 hover:-translate-y-0.5 hover:border-blue-100 hover:shadow-[0_14px_30px_rgba(15,23,42,0.08)]">
-          <strong className="block text-sm font-semibold text-slate-950">ELD Logs</strong>
-          <span className="mt-2 block text-xs leading-5 text-slate-400">Auto-generated daily log sheets</span>
-        </div>
-        <div className="rounded-xl border border-slate-100 bg-white p-4 text-left shadow-[0_8px_18px_rgba(15,23,42,0.04)] transition duration-200 hover:-translate-y-0.5 hover:border-blue-100 hover:shadow-[0_14px_30px_rgba(15,23,42,0.08)]">
-          <strong className="block text-sm font-semibold text-slate-950">Fuel Stops</strong>
-          <span className="mt-2 block text-xs leading-5 text-slate-400">Scheduled every 1,000 miles</span>
-        </div>
-      </div>
     </div>
   );
 }
