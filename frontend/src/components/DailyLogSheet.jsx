@@ -262,8 +262,8 @@ export default function DailyLogSheet({ log, dayNumber }) {
     const dpr = window.devicePixelRatio || 1;
     canvas.width = CANVAS_WIDTH * dpr;
     canvas.height = TOTAL_CANVAS_HEIGHT * dpr;
-    canvas.style.width = `${CANVAS_WIDTH}px`;
-    canvas.style.height = `${TOTAL_CANVAS_HEIGHT}px`;
+    canvas.style.width = '100%';
+    canvas.style.height = 'auto';
 
     const ctx = canvas.getContext('2d');
     drawLogGrid(ctx, log, dayNumber);
@@ -332,10 +332,10 @@ export default function DailyLogSheet({ log, dayNumber }) {
         </div>
       )}
 
-      <div className="overflow-x-auto bg-slate-50 px-5 py-5 sm:px-6">
+      <div className="overflow-hidden bg-slate-50 px-5 py-5 sm:px-6">
         <canvas
           ref={canvasRef}
-          className="block rounded-2xl bg-white shadow-[0_12px_32px_rgba(15,23,42,0.08)]"
+          className="block h-auto w-full rounded-2xl bg-white shadow-[0_12px_32px_rgba(15,23,42,0.08)]"
         />
       </div>
 

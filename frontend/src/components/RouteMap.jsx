@@ -88,52 +88,48 @@ function formatDuration(hours) {
 
 function RouteEvents({ stops }) {
   return (
-    <section className="dashboard-card p-5">
+    <section className="dashboard-card p-4">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h2 className="text-base font-semibold text-slate-950">Route Events</h2>
-          <p className="mt-1 text-sm text-slate-500">{stops.length} scheduled stops and duty events</p>
+          <h2 className="text-sm font-semibold text-slate-950">Route Events</h2>
+          <p className="mt-1 text-xs text-slate-500">{stops.length} scheduled stops and duty events</p>
         </div>
-        <div className="rounded-2xl bg-blue-50 p-3 text-blue-600">
-          <Route size={20} aria-hidden="true" />
+        <div className="rounded-xl bg-blue-50 p-2.5 text-blue-600">
+          <Route size={18} aria-hidden="true" />
         </div>
       </div>
 
-      <div className="mt-5 grid gap-3 xl:grid-cols-2">
+      <div className="mt-4 overflow-hidden rounded-2xl border border-slate-100">
         {stops.map((stop, idx) => {
           const Icon = timelineIcons[stop.stop_type] || MapPin;
           const color = STOP_COLORS[stop.stop_type] || '#64748b';
           return (
             <article
               key={`${stop.stop_type}-${stop.arrival_time}-${idx}`}
-              className="group rounded-2xl border border-slate-100 bg-slate-50 p-4 transition duration-200 hover:-translate-y-0.5 hover:border-blue-100 hover:bg-white hover:shadow-sm"
+              className="group grid gap-3 bg-white px-4 py-3 transition duration-200 hover:bg-slate-50 md:grid-cols-[minmax(180px,0.9fr)_minmax(240px,1.5fr)_minmax(130px,auto)_minmax(160px,auto)] md:items-center [&+&]:border-t [&+&]:border-slate-100"
             >
-              <div className="flex items-start gap-3">
-                <div className="rounded-xl bg-white p-2 shadow-sm" style={{ color }}>
-                  <Icon size={17} aria-hidden="true" />
+              <div className="flex min-w-0 items-center gap-3">
+                <div className="rounded-xl bg-slate-50 p-2" style={{ color }}>
+                  <Icon size={16} aria-hidden="true" />
                 </div>
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-start justify-between gap-3">
-                    <h3 className="text-sm font-semibold text-slate-950">
-                      {STOP_LABELS[stop.stop_type] || stop.stop_type}
-                    </h3>
-                    <span className="whitespace-nowrap text-xs text-slate-400">{formatTime(stop.arrival_time)}</span>
-                  </div>
-                  <p className="mt-1 truncate text-sm text-slate-600">{stop.location}</p>
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    {stop.duration_hours > 0 && (
-                      <span className="status-pill bg-blue-50 text-blue-700">
-                        <Clock3 size={13} aria-hidden="true" />
-                        <span className="ml-1">{formatDuration(stop.duration_hours)}</span>
-                      </span>
-                    )}
-                    {stop.cumulative_miles > 0 && (
-                      <span className="status-pill bg-slate-100 text-slate-600">
-                        Mile {stop.cumulative_miles.toLocaleString()}
-                      </span>
-                    )}
-                  </div>
-                </div>
+                <h3 className="truncate text-sm font-semibold text-slate-950">
+                  {STOP_LABELS[stop.stop_type] || stop.stop_type}
+                </h3>
+              </div>
+              <p className="min-w-0 truncate text-sm text-slate-600">{stop.location}</p>
+              <span className="whitespace-nowrap text-xs text-slate-400">{formatTime(stop.arrival_time)}</span>
+              <div className="flex flex-wrap gap-2 md:justify-end">
+                {stop.duration_hours > 0 && (
+                  <span className="status-pill bg-blue-50 text-blue-700">
+                    <Clock3 size={13} aria-hidden="true" />
+                    <span className="ml-1">{formatDuration(stop.duration_hours)}</span>
+                  </span>
+                )}
+                {stop.cumulative_miles > 0 && (
+                  <span className="status-pill bg-slate-100 text-slate-600">
+                    Mile {stop.cumulative_miles.toLocaleString()}
+                  </span>
+                )}
               </div>
             </article>
           );

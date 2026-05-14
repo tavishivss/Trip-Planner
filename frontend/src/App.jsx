@@ -71,28 +71,16 @@ function ErrorBanner({ error }) {
   );
 }
 
-function DashboardHeader({ tripData }) {
+function DashboardHeader() {
   return (
-    <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+    <div>
       <div>
-        <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-3 py-1.5 text-xs font-semibold text-blue-700">
-          <Route size={14} aria-hidden="true" />
-          Logistics SaaS dashboard
-        </div>
-        <h2 className="text-2xl font-semibold tracking-normal text-slate-950 sm:text-3xl">
+        <h2 className="text-xl font-semibold tracking-normal text-slate-950 sm:text-2xl">
           Dispatch route planning
         </h2>
-        <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-500">
+        <p className="mt-1 max-w-xl text-xs leading-5 text-slate-500 sm:text-sm">
           Plan HOS-compliant long-haul routes, validate drive windows, and review route events from one clean workspace.
         </p>
-      </div>
-      <div className="flex flex-wrap gap-2">
-        <span className="status-pill bg-white text-slate-600 ring-1 ring-slate-200">
-          Desktop optimized
-        </span>
-        <span className="status-pill bg-emerald-50 text-emerald-700 ring-1 ring-emerald-100">
-          {tripData ? 'Route generated' : 'Ready to plan'}
-        </span>
       </div>
     </div>
   );
@@ -143,8 +131,8 @@ function App() {
     <div className="min-h-screen bg-app-bg text-slate-950">
       <TopNav />
 
-      <main className="mx-auto grid max-w-[1760px] gap-6 px-4 py-6 sm:px-6 lg:grid-cols-[410px_minmax(0,1fr)] lg:px-8">
-        <aside className="space-y-5 lg:sticky lg:top-[84px] lg:h-[calc(100vh-108px)] lg:overflow-y-auto lg:pr-1">
+      <main className="mx-auto grid max-w-[1760px] gap-5 px-4 py-5 sm:px-6 lg:grid-cols-[410px_minmax(0,1fr)] lg:px-8">
+        <aside className="space-y-5 lg:sticky lg:top-5 lg:h-[calc(100vh-40px)] lg:overflow-y-auto lg:pr-1">
           <TripForm
             onSubmit={handleTripSubmit}
             loading={loading}
@@ -155,10 +143,10 @@ function App() {
           {tripData ? <TripSummary data={tripData} /> : <SidebarPreview />}
         </aside>
 
-        <section className="min-w-0 space-y-6">
-          <DashboardHeader tripData={tripData} />
+        <section className="min-w-0 space-y-5">
+          <DashboardHeader />
 
-          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
             {kpis.map((item) => (
               <KpiCard
                 key={item.label}
