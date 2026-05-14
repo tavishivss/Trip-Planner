@@ -20,8 +20,6 @@ const GRID_WIDTH = TOTAL_HOURS * HOUR_WIDTH;
 const GRID_HEIGHT = GRID_ROWS * ROW_HEIGHT;
 const CANVAS_WIDTH = GRID_LEFT + GRID_WIDTH + 80;
 const CANVAS_HEIGHT = GRID_TOP + GRID_HEIGHT + 50;
-const REMARKS_HEIGHT = 60;
-const TOTAL_CANVAS_HEIGHT = CANVAS_HEIGHT + REMARKS_HEIGHT;
 
 const LINE_COLORS = {
   off_duty: '#2563eb',
@@ -41,7 +39,7 @@ function drawLogGrid(ctx, log, dayNumber) {
   const dpr = window.devicePixelRatio || 1;
 
   ctx.fillStyle = '#ffffff';
-  ctx.fillRect(0, 0, CANVAS_WIDTH * dpr, TOTAL_CANVAS_HEIGHT * dpr);
+  ctx.fillRect(0, 0, CANVAS_WIDTH * dpr, CANVAS_HEIGHT * dpr);
 
   ctx.save();
   ctx.scale(dpr, dpr);
@@ -184,32 +182,6 @@ function drawLogGrid(ctx, log, dayNumber) {
     drawDutyLines(ctx, log.entries);
   }
 
-  // Remarks section
-  const remarksY = CANVAS_HEIGHT - 10;
-  ctx.fillStyle = '#f8fafc';
-  ctx.fillRect(0, remarksY, CANVAS_WIDTH, REMARKS_HEIGHT);
-  ctx.beginPath();
-  ctx.strokeStyle = '#cbd5e1';
-  ctx.lineWidth = 1;
-  ctx.moveTo(0, remarksY);
-  ctx.lineTo(CANVAS_WIDTH, remarksY);
-  ctx.stroke();
-
-  ctx.fillStyle = '#475569';
-  ctx.font = 'bold 10px "Inter", system-ui, sans-serif';
-  ctx.textAlign = 'left';
-  ctx.fillText('REMARKS', 12, remarksY + 16);
-
-  if (log.remarks && log.remarks.length > 0) {
-    ctx.font = '9px "Inter", system-ui, sans-serif';
-    ctx.fillStyle = '#64748b';
-    const maxRemarks = Math.min(log.remarks.length, 3);
-    for (let i = 0; i < maxRemarks; i++) {
-      const text = log.remarks[i].length > 90 ? log.remarks[i].substring(0, 87) + '...' : log.remarks[i];
-      ctx.fillText(text, 12, remarksY + 30 + i * 13);
-    }
-  }
-
   ctx.restore();
 }
 
@@ -261,7 +233,7 @@ export default function DailyLogSheet({ log, dayNumber }) {
 
     const dpr = window.devicePixelRatio || 1;
     canvas.width = CANVAS_WIDTH * dpr;
-    canvas.height = TOTAL_CANVAS_HEIGHT * dpr;
+    canvas.height = CANVAS_HEIGHT * dpr;
     canvas.style.width = '100%';
     canvas.style.height = 'auto';
 

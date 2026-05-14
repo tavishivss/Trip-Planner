@@ -1,4 +1,4 @@
-import { Activity, Clock3, Fuel, Route, ShieldCheck } from 'lucide-react';
+import { Activity, Clock3, ShieldCheck } from 'lucide-react';
 
 const dotClasses = {
   driving: 'bg-red-600',
@@ -24,7 +24,7 @@ function BreakdownRow({ tone, label, value, total }) {
 }
 
 export default function TripSummary({ data }) {
-  const { route, stops, cycle_info, shifts, time_breakdown } = data;
+  const { stops, cycle_info, shifts, time_breakdown } = data;
 
   const breakStops = stops.filter((s) => s.stop_type === 'break');
   const resetStops = stops.filter((s) => s.stop_type === 'off_duty_reset');
@@ -135,31 +135,6 @@ export default function TripSummary({ data }) {
           </div>
         </div>
       )}
-
-      <div className="mt-6 grid gap-3">
-        <div className="flex items-center gap-3 rounded-2xl bg-slate-50 p-4">
-          <div className="rounded-xl bg-blue-50 p-2.5 text-blue-600">
-            <Route size={18} aria-hidden="true" />
-          </div>
-          <div>
-            <p className="text-sm font-semibold text-slate-950">To pickup</p>
-            <p className="text-xs text-slate-500">
-              {route.to_pickup?.distance_miles?.toLocaleString()} mi - {route.to_pickup?.duration_hours?.toFixed(1)} hrs
-            </p>
-          </div>
-        </div>
-        <div className="flex items-center gap-3 rounded-2xl bg-slate-50 p-4">
-          <div className="rounded-xl bg-slate-200 p-2.5 text-slate-700">
-            <Fuel size={18} aria-hidden="true" />
-          </div>
-          <div>
-            <p className="text-sm font-semibold text-slate-950">To drop-off</p>
-            <p className="text-xs text-slate-500">
-              {route.to_dropoff?.distance_miles?.toLocaleString()} mi - {route.to_dropoff?.duration_hours?.toFixed(1)} hrs
-            </p>
-          </div>
-        </div>
-      </div>
     </section>
   );
 }
