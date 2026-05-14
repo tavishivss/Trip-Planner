@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { AlertCircle, ClipboardList, Clock3, Fuel, Map, Route, Timer } from 'lucide-react';
 import TripForm from './components/TripForm';
 import RouteMap from './components/RouteMap';
 import DailyLogSheet from './components/DailyLogSheet';
 import TripSummary from './components/TripSummary';
+import SplashLoader from './components/SplashLoader';
 import TopNav from './components/dashboard/TopNav';
 import KpiCard from './components/dashboard/KpiCard';
 import TabButton from './components/dashboard/TabButton';
@@ -127,6 +128,8 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState('map');
+  const [showSplash, setShowSplash] = useState(true);
+  const [mainReady, setMainReady] = useState(false);
 
   const handleTripSubmit = (data) => {
     setTripData(data);
@@ -134,66 +137,88 @@ function App() {
     setError(null);
   };
 
+  const handleSplashExitStart = useCallback(() => {
+    setMainReady(true);
+  }, []);
+
+  const handleSplashFinish = useCallback(() => {
+    setShowSplash(false);
+  }, []);
+
   const kpis = tripData ? getDashboardKpis(tripData) : [];
 
   return (
-    <div className="min-h-screen bg-app-bg text-slate-950">
-      <TopNav />
+    <>
+      {showSplash && (
+        <SplashLoader
+          duration={2400}
+          onExitStart={handleSplashExitStart}
+          onFinish={handleSplashFinish}
+        />
+      )}
 
-      <main className="mx-auto grid max-w-[1760px] gap-5 px-4 py-5 sm:px-6 lg:grid-cols-[410px_minmax(0,1fr)] lg:px-8">
-        <aside className="space-y-5 lg:sticky lg:top-5 lg:h-[calc(100vh-40px)] lg:overflow-y-auto lg:pr-1">
-          <TripForm
-            onSubmit={handleTripSubmit}
-            loading={loading}
-            setLoading={setLoading}
-            setError={setError}
-          />
-          <ErrorBanner error={error} />
-          {tripData && <TripSummary data={tripData} />}
-        </aside>
+      <div
+        className={`min-h-screen bg-app-bg text-slate-950 transition-opacity duration-500 ${
+          mainReady ? 'opacity-100' : 'opacity-0'
+        }`}
+      >
+        <TopNav />
 
-        <section className="min-w-0 space-y-5">
-          {tripData ? (
-            <>
-              <DashboardHeader />
+        <main className="mx-auto grid max-w-[1760px] gap-5 px-4 py-5 sm:px-6 lg:grid-cols-[410px_minmax(0,1fr)] lg:px-8">
+          <aside className="space-y-5 lg:sticky lg:top-5 lg:h-[calc(100vh-40px)] lg:overflow-y-auto lg:pr-1">
+            <TripForm
+              onSubmit={handleTripSubmit}
+              loading={loading}
+              setLoading={setLoading}
+              setError={setError}
+            />
+            <ErrorBanner error={error} />
+            {tripData && <TripSummary data={tripData} />}
+          </aside>
 
-              <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-                {kpis.map((item) => (
-                  <KpiCard
-                    key={item.label}
-                    icon={item.icon}
-                    label={item.label}
-                    value={item.value}
-                    unit={item.unit}
-                    hint={item.hint}
-                    tone={item.tone}
-                  />
-                ))}
-              </div>
+          <section className="min-w-0 space-y-5">
+            {tripData ? (
+              <>
+                <DashboardHeader />
 
-              <div className="flex rounded-2xl bg-slate-100 p-1">
-                <TabButton active={activeTab === 'map'} icon={Map} onClick={() => setActiveTab('map')}>
-                  Route Map
-                </TabButton>
-                <TabButton active={activeTab === 'logs'} icon={ClipboardList} onClick={() => setActiveTab('logs')}>
-                  Daily Logs ({tripData.daily_logs.length})
-                </TabButton>
-              </div>
+                <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+                  {kpis.map((item) => (
+                    <KpiCard
+                      key={item.label}
+                      icon={item.icon}
+                      label={item.label}
+                      value={item.value}
+                      unit={item.unit}
+                      hint={item.hint}
+                      tone={item.tone}
+                    />
+                  ))}
+                </div>
 
-              <div className="transition duration-200">
-                {activeTab === 'map' ? (
-                  <RouteMap route={tripData.route} stops={tripData.stops} />
-                ) : (
-                  <LogsPanel tripData={tripData} />
-                )}
-              </div>
-            </>
-          ) : (
-            <EmptyState />
-          )}
-        </section>
-      </main>
-    </div>
+                <div className="flex rounded-2xl bg-slate-100 p-1">
+                  <TabButton active={activeTab === 'map'} icon={Map} onClick={() => setActiveTab('map')}>
+                    Route Map
+                  </TabButton>
+                  <TabButton active={activeTab === 'logs'} icon={ClipboardList} onClick={() => setActiveTab('logs')}>
+                    Daily Logs ({tripData.daily_logs.length})
+                  </TabButton>
+                </div>
+
+                <div className="transition duration-200">
+                  {activeTab === 'map' ? (
+                    <RouteMap route={tripData.route} stops={tripData.stops} />
+                  ) : (
+                    <LogsPanel tripData={tripData} />
+                  )}
+                </div>
+              </>
+            ) : (
+              <EmptyState />
+            )}
+          </section>
+        </main>
+      </div>
+    </>
   );
 }
 

@@ -135,3 +135,55 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
 }
+
+.splash-route {
+  --splash-track-width: min(400px, calc(100vw - 48px));
+  width: var(--splash-track-width);
+}
+
+.splash-truck {
+  animation: splash-truck-drive var(--splash-duration, 2400ms) cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  will-change: transform;
+}
+
+.splash-progress-fill {
+  animation: splash-progress-fill var(--splash-duration, 2400ms) cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  transform: scaleX(0.04);
+  transform-origin: left center;
+  will-change: transform;
+}
+
+@keyframes splash-truck-drive {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+
+  14% {
+    transform: translate3d(0, 0, 0);
+  }
+
+  100% {
+    transform: translate3d(calc(var(--splash-track-width) - 48px), 0, 0);
+  }
+}
+
+@keyframes splash-progress-fill {
+  0% {
+    transform: scaleX(0.04);
+  }
+
+  18% {
+    transform: scaleX(0.08);
+  }
+
+  100% {
+    transform: scaleX(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .splash-truck,
+  .splash-progress-fill {
+    animation-duration: 1ms;
+  }
+}
