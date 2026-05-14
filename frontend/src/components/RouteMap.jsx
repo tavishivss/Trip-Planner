@@ -119,13 +119,13 @@ function RouteEvents({ stops }) {
               <span className="whitespace-nowrap text-xs text-slate-400">{formatTime(stop.arrival_time)}</span>
               <div className="flex flex-wrap gap-2 md:justify-end">
                 {stop.duration_hours > 0 && (
-                  <span className="status-pill bg-blue-50 text-blue-700">
+                  <span className="status-pill duty-pill-off">
                     <Clock3 size={13} aria-hidden="true" />
                     <span className="ml-1">{formatDuration(stop.duration_hours)}</span>
                   </span>
                 )}
                 {stop.cumulative_miles > 0 && (
-                  <span className="status-pill bg-slate-100 text-slate-600">
+                  <span className="status-pill duty-pill-sleeper">
                     Mile {stop.cumulative_miles.toLocaleString()}
                   </span>
                 )}

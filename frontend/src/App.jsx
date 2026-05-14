@@ -63,7 +63,6 @@ function DashboardHeader() {
           Dispatch route planning
         </h2>
         <p className="mt-1 max-w-xl text-xs leading-5 text-slate-500 sm:text-sm">
-          Plan HOS-compliant long-haul routes, validate drive windows, and review route events from one clean workspace.
         </p>
       </div>
     </div>
