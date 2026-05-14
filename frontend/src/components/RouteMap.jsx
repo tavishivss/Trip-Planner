@@ -94,7 +94,7 @@ function RouteEvents({ stops }) {
           <h2 className="text-sm font-semibold text-slate-950">Route Events</h2>
           <p className="mt-1 text-xs text-slate-500">{stops.length} scheduled stops and duty events</p>
         </div>
-        <div className="rounded-xl bg-blue-50 p-2.5 text-blue-600">
+        <div className="kpi-icon-shell">
           <Route size={18} aria-hidden="true" />
         </div>
       </div>
@@ -102,14 +102,13 @@ function RouteEvents({ stops }) {
       <div className="mt-4 overflow-hidden rounded-2xl border border-slate-100">
         {stops.map((stop, idx) => {
           const Icon = timelineIcons[stop.stop_type] || MapPin;
-          const color = STOP_COLORS[stop.stop_type] || '#64748b';
           return (
             <article
               key={`${stop.stop_type}-${stop.arrival_time}-${idx}`}
               className="group grid gap-3 bg-white px-4 py-3 transition duration-200 hover:bg-slate-50 md:grid-cols-[minmax(180px,0.9fr)_minmax(240px,1.5fr)_minmax(130px,auto)_minmax(160px,auto)] md:items-center [&+&]:border-t [&+&]:border-slate-100"
             >
               <div className="flex min-w-0 items-center gap-3">
-                <div className="rounded-xl bg-slate-50 p-2" style={{ color }}>
+                <div className="route-event-icon-shell">
                   <Icon size={16} aria-hidden="true" />
                 </div>
                 <h3 className="truncate text-sm font-semibold text-slate-950">

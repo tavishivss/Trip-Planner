@@ -1,11 +1,4 @@
-export default function KpiCard({ icon: Icon, label, value, unit, hint, tone = 'blue' }) {
-  const toneClasses = {
-    blue: 'bg-blue-50 text-blue-600 ring-blue-100',
-    slate: 'bg-slate-100 text-slate-600 ring-slate-200',
-    amber: 'bg-amber-50 text-amber-700 ring-amber-100',
-    emerald: 'bg-emerald-50 text-emerald-700 ring-emerald-100',
-  };
-
+export default function KpiCard({ icon: Icon, label, value, unit, hint }) {
   return (
     <section className="dashboard-card group p-4 transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_16px_36px_rgba(15,23,42,0.08)]">
       <div className="flex items-start justify-between gap-3">
@@ -19,8 +12,8 @@ export default function KpiCard({ icon: Icon, label, value, unit, hint, tone = '
           </div>
         </div>
         {Icon && (
-          <div className={`rounded-xl p-2.5 ring-1 ${toneClasses[tone] || toneClasses.blue}`}>
-            <Icon size={17} strokeWidth={2.1} aria-hidden="true" />
+          <div className="kpi-icon-shell">
+            <Icon size={18} strokeWidth={2} aria-hidden="true" />
           </div>
         )}
       </div>

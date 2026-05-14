@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import { AlertCircle, ClipboardList, Clock3, Fuel, Map, Route, Timer } from 'lucide-react';
+import { AlertCircle, CalendarDays, ClipboardList, Fuel, Gauge, Map, Route } from 'lucide-react';
 import TripForm from './components/TripForm';
 import RouteMap from './components/RouteMap';
 import DailyLogSheet from './components/DailyLogSheet';
@@ -19,23 +19,20 @@ function getDashboardKpis(tripData) {
       unit: 'mi',
       hint: 'Calculated across pickup and drop-off legs',
       icon: Route,
-      tone: 'blue',
     },
     {
       label: 'Drive time',
       value: tripData.route.total_duration_hours?.toFixed(1) || '0.0',
       unit: 'hrs',
       hint: 'Estimated wheel time',
-      icon: Clock3,
-      tone: 'slate',
+      icon: Gauge,
     },
     {
       label: 'Trip length',
       value: tripData.daily_logs.length,
       unit: tripData.daily_logs.length === 1 ? 'day' : 'days',
       hint: 'Generated ELD log sheets',
-      icon: Timer,
-      tone: 'emerald',
+      icon: CalendarDays,
     },
     {
       label: 'Fuel stops',
@@ -43,7 +40,6 @@ function getDashboardKpis(tripData) {
       unit: 'planned',
       hint: `${tripData.stops.length} total route events`,
       icon: Fuel,
-      tone: 'amber',
     },
   ];
 }
@@ -171,7 +167,6 @@ function App() {
                       value={item.value}
                       unit={item.unit}
                       hint={item.hint}
-                      tone={item.tone}
                     />
                   ))}
                 </div>
