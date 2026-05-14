@@ -7,22 +7,9 @@ import TripSummary from './components/TripSummary';
 import TopNav from './components/dashboard/TopNav';
 import KpiCard from './components/dashboard/KpiCard';
 import TabButton from './components/dashboard/TabButton';
-import { EmptyRoutePreview, PreviewEvents, PreviewLogs, SidebarPreview } from './components/dashboard/PreviewDashboard';
-import { demoKpis } from './data/demoTrip';
 import './App.css';
 
 function getDashboardKpis(tripData) {
-  if (!tripData) {
-    const icons = [Route, Clock3, Timer, Fuel];
-    const tones = ['blue', 'slate', 'emerald', 'amber'];
-    return demoKpis.map((item, index) => ({
-      ...item,
-      icon: icons[index],
-      tone: tones[index],
-      hint: item.trend,
-    }));
-  }
-
   const fuelStops = tripData.stops.filter((stop) => stop.stop_type === 'fuel').length;
   return [
     {
@@ -86,11 +73,46 @@ function DashboardHeader() {
   );
 }
 
-function LogsPanel({ tripData }) {
-  if (!tripData) {
-    return <PreviewLogs />;
-  }
+function EmptyState() {
+  return (
+    <div className="flex min-h-[calc(100vh-104px)] flex-col items-center justify-center px-5 py-10 text-center sm:px-8">
+      <svg className="mb-5 h-14 w-14 opacity-60" viewBox="0 0 80 80" fill="none" aria-hidden="true">
+        <circle cx="40" cy="40" r="36" stroke="#d1d5db" strokeWidth="2" fill="none" />
+        <path d="M25 50L40 20L55 50H25Z" stroke="#9ca3af" strokeWidth="2" fill="none" />
+        <circle cx="40" cy="55" r="4" stroke="#9ca3af" strokeWidth="2" fill="none" />
+        <path d="M30 35h20M35 42h10" stroke="#9ca3af" strokeWidth="1.5" />
+      </svg>
 
+      <h2 className="text-2xl font-semibold leading-tight tracking-normal text-slate-950 sm:text-3xl">
+        Plan Your Trip
+      </h2>
+      <p className="mt-3 max-w-xl text-sm leading-6 text-slate-600 sm:text-base">
+        Enter your trip details on the left to generate an HOS-compliant route with ELD daily log sheets.
+      </p>
+
+      <div className="mt-7 grid w-full max-w-2xl gap-3 sm:grid-cols-2">
+        <div className="rounded-xl border border-slate-100 bg-white p-4 text-left shadow-[0_8px_18px_rgba(15,23,42,0.04)] transition duration-200 hover:-translate-y-0.5 hover:border-blue-100 hover:shadow-[0_14px_30px_rgba(15,23,42,0.08)]">
+          <strong className="block text-sm font-semibold text-slate-950">Route Planning</strong>
+          <span className="mt-2 block text-xs leading-5 text-slate-400">Optimized routes with mandatory stops</span>
+        </div>
+        <div className="rounded-xl border border-slate-100 bg-white p-4 text-left shadow-[0_8px_18px_rgba(15,23,42,0.04)] transition duration-200 hover:-translate-y-0.5 hover:border-blue-100 hover:shadow-[0_14px_30px_rgba(15,23,42,0.08)]">
+          <strong className="block text-sm font-semibold text-slate-950">HOS Compliance</strong>
+          <span className="mt-2 block text-xs leading-5 text-slate-400">11hr drive / 14hr window / 70hr cycle</span>
+        </div>
+        <div className="rounded-xl border border-slate-100 bg-white p-4 text-left shadow-[0_8px_18px_rgba(15,23,42,0.04)] transition duration-200 hover:-translate-y-0.5 hover:border-blue-100 hover:shadow-[0_14px_30px_rgba(15,23,42,0.08)]">
+          <strong className="block text-sm font-semibold text-slate-950">ELD Logs</strong>
+          <span className="mt-2 block text-xs leading-5 text-slate-400">Auto-generated daily log sheets</span>
+        </div>
+        <div className="rounded-xl border border-slate-100 bg-white p-4 text-left shadow-[0_8px_18px_rgba(15,23,42,0.04)] transition duration-200 hover:-translate-y-0.5 hover:border-blue-100 hover:shadow-[0_14px_30px_rgba(15,23,42,0.08)]">
+          <strong className="block text-sm font-semibold text-slate-950">Fuel Stops</strong>
+          <span className="mt-2 block text-xs leading-5 text-slate-400">Scheduled every 1,000 miles</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function LogsPanel({ tripData }) {
   return (
     <div className="space-y-6">
       {tripData.daily_logs.map((log, idx) => (
@@ -98,19 +120,6 @@ function LogsPanel({ tripData }) {
       ))}
     </div>
   );
-}
-
-function MapPanel({ tripData }) {
-  if (!tripData) {
-    return (
-      <div className="space-y-6">
-        <EmptyRoutePreview />
-        <PreviewEvents />
-      </div>
-    );
-  }
-
-  return <RouteMap route={tripData.route} stops={tripData.stops} />;
 }
 
 function App() {
@@ -125,7 +134,7 @@ function App() {
     setError(null);
   };
 
-  const kpis = getDashboardKpis(tripData);
+  const kpis = tripData ? getDashboardKpis(tripData) : [];
 
   return (
     <div className="min-h-screen bg-app-bg text-slate-950">
@@ -140,38 +149,48 @@ function App() {
             setError={setError}
           />
           <ErrorBanner error={error} />
-          {tripData ? <TripSummary data={tripData} /> : <SidebarPreview />}
+          {tripData && <TripSummary data={tripData} />}
         </aside>
 
         <section className="min-w-0 space-y-5">
-          <DashboardHeader />
+          {tripData ? (
+            <>
+              <DashboardHeader />
 
-          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-            {kpis.map((item) => (
-              <KpiCard
-                key={item.label}
-                icon={item.icon}
-                label={item.label}
-                value={item.value}
-                unit={item.unit}
-                hint={item.hint}
-                tone={item.tone}
-              />
-            ))}
-          </div>
+              <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+                {kpis.map((item) => (
+                  <KpiCard
+                    key={item.label}
+                    icon={item.icon}
+                    label={item.label}
+                    value={item.value}
+                    unit={item.unit}
+                    hint={item.hint}
+                    tone={item.tone}
+                  />
+                ))}
+              </div>
 
-          <div className="flex rounded-2xl bg-slate-100 p-1">
-            <TabButton active={activeTab === 'map'} icon={Map} onClick={() => setActiveTab('map')}>
-              Route Map
-            </TabButton>
-            <TabButton active={activeTab === 'logs'} icon={ClipboardList} onClick={() => setActiveTab('logs')}>
-              Daily Logs {tripData ? `(${tripData.daily_logs.length})` : ''}
-            </TabButton>
-          </div>
+              <div className="flex rounded-2xl bg-slate-100 p-1">
+                <TabButton active={activeTab === 'map'} icon={Map} onClick={() => setActiveTab('map')}>
+                  Route Map
+                </TabButton>
+                <TabButton active={activeTab === 'logs'} icon={ClipboardList} onClick={() => setActiveTab('logs')}>
+                  Daily Logs ({tripData.daily_logs.length})
+                </TabButton>
+              </div>
 
-          <div className="transition duration-200">
-            {activeTab === 'map' ? <MapPanel tripData={tripData} /> : <LogsPanel tripData={tripData} />}
-          </div>
+              <div className="transition duration-200">
+                {activeTab === 'map' ? (
+                  <RouteMap route={tripData.route} stops={tripData.stops} />
+                ) : (
+                  <LogsPanel tripData={tripData} />
+                )}
+              </div>
+            </>
+          ) : (
+            <EmptyState />
+          )}
         </section>
       </main>
     </div>
