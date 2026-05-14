@@ -81,7 +81,6 @@ function App() {
                   <RouteMap
                     route={tripData.route}
                     stops={tripData.stops}
-                    locations={tripData.locations}
                   />
                 )}
                 {activeTab === 'logs' && (

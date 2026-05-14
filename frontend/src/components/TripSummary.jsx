@@ -3,7 +3,6 @@ export default function TripSummary({ data }) {
 
   const breakStops = stops.filter((s) => s.stop_type === 'break');
   const resetStops = stops.filter((s) => s.stop_type === 'off_duty_reset');
-  const fuelStops = stops.filter((s) => s.stop_type === 'fuel');
 
   return (
     <div className="trip-summary">
@@ -34,44 +33,44 @@ export default function TripSummary({ data }) {
           <h4>On-Duty Time Breakdown</h4>
           <div className="breakdown-rows">
             <div className="breakdown-row">
-              <span className="breakdown-dot" style={{ background: '#dc2626' }} />
+              <span className="breakdown-dot driving" />
               <span className="breakdown-label">Driving</span>
               <span className="breakdown-value">{time_breakdown.driving} hrs</span>
             </div>
             <div className="breakdown-row">
-              <span className="breakdown-dot" style={{ background: '#3b82f6' }} />
+              <span className="breakdown-dot pickup" />
               <span className="breakdown-label">Pickup (loading)</span>
               <span className="breakdown-value">{time_breakdown.pickup} hrs</span>
             </div>
             <div className="breakdown-row">
-              <span className="breakdown-dot" style={{ background: '#8b5cf6' }} />
+              <span className="breakdown-dot dropoff" />
               <span className="breakdown-label">Drop-off (unloading)</span>
               <span className="breakdown-value">{time_breakdown.dropoff} hrs</span>
             </div>
             <div className="breakdown-row">
-              <span className="breakdown-dot" style={{ background: '#f97316' }} />
+              <span className="breakdown-dot fuel" />
               <span className="breakdown-label">Fueling</span>
               <span className="breakdown-value">{time_breakdown.fueling} hrs</span>
             </div>
             <div className="breakdown-row total">
-              <span className="breakdown-dot" style={{ background: '#c2410c' }} />
+              <span className="breakdown-dot on-duty" />
               <span className="breakdown-label">Total On-Duty</span>
               <span className="breakdown-value">{time_breakdown.total_on_duty} hrs</span>
             </div>
           </div>
           <div className="breakdown-rows" style={{ marginTop: '8px' }}>
             <div className="breakdown-row">
-              <span className="breakdown-dot" style={{ background: '#eab308' }} />
+              <span className="breakdown-dot break" />
               <span className="breakdown-label">30-min Breaks ({breakStops.length})</span>
               <span className="breakdown-value">{time_breakdown.breaks_30min} hrs</span>
             </div>
             <div className="breakdown-row">
-              <span className="breakdown-dot" style={{ background: '#f59e0b' }} />
+              <span className="breakdown-dot reset" />
               <span className="breakdown-label">Off-Duty Resets ({resetStops.length})</span>
               <span className="breakdown-value">{time_breakdown.off_duty_resets} hrs</span>
             </div>
             <div className="breakdown-row total">
-              <span className="breakdown-dot" style={{ background: '#1d4ed8' }} />
+              <span className="breakdown-dot off-duty" />
               <span className="breakdown-label">Total Off-Duty</span>
               <span className="breakdown-value">{time_breakdown.total_off_duty} hrs</span>
             </div>
@@ -130,7 +129,7 @@ export default function TripSummary({ data }) {
                 </span>
                 <div className="day-bars">
                   <div className="day-bar-group">
-                    <span className="bar-label">
+                    <span className={`bar-label ${shift.driving_ok ? 'ok' : 'alert'}`}>
                       Drive {shift.driving_hours}/{shift.driving_limit}h
                       {shift.driving_ok ? ' \u2713' : ' \u2717'}
                     </span>
@@ -139,7 +138,7 @@ export default function TripSummary({ data }) {
                     </div>
                   </div>
                   <div className="day-bar-group">
-                    <span className="bar-label">
+                    <span className={`bar-label ${shift.window_ok ? 'ok' : 'alert'}`}>
                       Window {shift.window_hours}/{shift.window_limit}h
                       {shift.window_ok ? ' \u2713' : ' \u2717'}
                     </span>
@@ -156,7 +155,7 @@ export default function TripSummary({ data }) {
 
       <div className="route-legs">
         <div className="leg">
-          <div className="leg-color" style={{ background: '#3b82f6' }} />
+          <div className="leg-color pickup" />
           <div className="leg-info">
             <span className="leg-label">To Pickup</span>
             <span className="leg-detail">
@@ -165,7 +164,7 @@ export default function TripSummary({ data }) {
           </div>
         </div>
         <div className="leg">
-          <div className="leg-color" style={{ background: '#8b5cf6' }} />
+          <div className="leg-color dropoff" />
           <div className="leg-info">
             <span className="leg-label">To Drop-off</span>
             <span className="leg-detail">

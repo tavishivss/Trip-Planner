@@ -23,17 +23,17 @@ const REMARKS_HEIGHT = 60;
 const TOTAL_CANVAS_HEIGHT = CANVAS_HEIGHT + REMARKS_HEIGHT;
 
 const LINE_COLORS = {
-  off_duty: '#1d4ed8',
-  sleeper_berth: '#7c3aed',
+  off_duty: '#2563eb',
+  sleeper_berth: '#64748b',
   driving: '#dc2626',
-  on_duty_not_driving: '#c2410c',
+  on_duty_not_driving: '#d97706',
 };
 
 const ROW_BGS = [
-  'rgba(219, 234, 254, 0.3)',
-  'rgba(237, 233, 254, 0.3)',
-  'rgba(254, 226, 226, 0.3)',
-  'rgba(255, 237, 213, 0.3)',
+  'rgba(37, 99, 235, 0.06)',
+  'rgba(100, 116, 139, 0.06)',
+  'rgba(220, 38, 38, 0.07)',
+  'rgba(217, 119, 6, 0.07)',
 ];
 
 function drawLogGrid(ctx, log, dayNumber) {
@@ -46,15 +46,23 @@ function drawLogGrid(ctx, log, dayNumber) {
   ctx.scale(dpr, dpr);
 
   // Title bar
-  ctx.fillStyle = '#1e293b';
+  ctx.fillStyle = '#f8fafc';
   ctx.fillRect(0, 0, CANVAS_WIDTH, 32);
-  ctx.fillStyle = '#ffffff';
+  ctx.beginPath();
+  ctx.strokeStyle = '#e2e8f0';
+  ctx.lineWidth = 1;
+  ctx.moveTo(0, 32);
+  ctx.lineTo(CANVAS_WIDTH, 32);
+  ctx.stroke();
+
+  ctx.fillStyle = '#0f172a';
   ctx.font = 'bold 12px "Inter", system-ui, sans-serif';
   ctx.textAlign = 'left';
   ctx.fillText(`DRIVER'S DAILY LOG`, 12, 20);
 
   ctx.font = '11px "Inter", system-ui, sans-serif';
   ctx.textAlign = 'right';
+  ctx.fillStyle = '#475569';
   ctx.fillText(`Day ${dayNumber}  |  ${log.date_display}  |  ${log.total_miles} miles driven`, CANVAS_WIDTH - 12, 20);
 
   // Row backgrounds
@@ -68,7 +76,7 @@ function drawLogGrid(ctx, log, dayNumber) {
   for (let row = 0; row <= GRID_ROWS; row++) {
     const y = GRID_TOP + row * ROW_HEIGHT;
     ctx.beginPath();
-    ctx.strokeStyle = row === 0 || row === GRID_ROWS ? '#475569' : '#94a3b8';
+    ctx.strokeStyle = row === 0 || row === GRID_ROWS ? '#cbd5e1' : '#e2e8f0';
     ctx.lineWidth = row === 0 || row === GRID_ROWS ? 1.5 : 0.8;
     ctx.moveTo(GRID_LEFT, y);
     ctx.lineTo(GRID_LEFT + GRID_WIDTH, y);
@@ -80,7 +88,7 @@ function drawLogGrid(ctx, log, dayNumber) {
     const x = GRID_LEFT + h * HOUR_WIDTH;
     const isMajor = h === 0 || h === 12 || h === 24;
     ctx.beginPath();
-    ctx.strokeStyle = isMajor ? '#475569' : '#cbd5e1';
+    ctx.strokeStyle = isMajor ? '#cbd5e1' : '#e5e7eb';
     ctx.lineWidth = isMajor ? 1.5 : 0.8;
     ctx.moveTo(x, GRID_TOP);
     ctx.lineTo(x, GRID_TOP + GRID_HEIGHT);
@@ -95,7 +103,7 @@ function drawLogGrid(ctx, log, dayNumber) {
       for (let row = 0; row < GRID_ROWS; row++) {
         const rowMid = GRID_TOP + row * ROW_HEIGHT + ROW_HEIGHT / 2;
         ctx.beginPath();
-        ctx.strokeStyle = '#d1d5db';
+        ctx.strokeStyle = '#e5e7eb';
         ctx.lineWidth = 0.5;
         ctx.moveTo(x, rowMid - tickLen);
         ctx.lineTo(x, rowMid + tickLen);
@@ -105,7 +113,7 @@ function drawLogGrid(ctx, log, dayNumber) {
   }
 
   // Hour labels at top
-  ctx.fillStyle = '#334155';
+  ctx.fillStyle = '#64748b';
   ctx.font = '9px "Inter", system-ui, sans-serif';
   ctx.textAlign = 'center';
 
@@ -125,7 +133,7 @@ function drawLogGrid(ctx, log, dayNumber) {
 
   // Row labels
   ctx.textAlign = 'right';
-  ctx.fillStyle = '#334155';
+  ctx.fillStyle = '#475569';
 
   STATUS_LABELS.forEach((label, i) => {
     const y = GRID_TOP + i * ROW_HEIGHT + ROW_HEIGHT / 2;
@@ -138,15 +146,15 @@ function drawLogGrid(ctx, log, dayNumber) {
   });
 
   // Total hours column
-  ctx.fillStyle = '#f8fafc';
+  ctx.fillStyle = '#ffffff';
   ctx.fillRect(GRID_LEFT + GRID_WIDTH, GRID_TOP, 65, GRID_HEIGHT);
-  ctx.strokeStyle = '#475569';
+  ctx.strokeStyle = '#cbd5e1';
   ctx.lineWidth = 1.5;
   ctx.strokeRect(GRID_LEFT + GRID_WIDTH, GRID_TOP, 65, GRID_HEIGHT);
 
   ctx.textAlign = 'center';
   ctx.font = 'bold 9px "Inter", system-ui, sans-serif';
-  ctx.fillStyle = '#334155';
+  ctx.fillStyle = '#475569';
   ctx.fillText('Total', GRID_LEFT + GRID_WIDTH + 32, GRID_TOP - 14);
   ctx.fillText('Hours', GRID_LEFT + GRID_WIDTH + 32, GRID_TOP - 4);
 
@@ -158,7 +166,7 @@ function drawLogGrid(ctx, log, dayNumber) {
 
     if (i > 0) {
       ctx.beginPath();
-      ctx.strokeStyle = '#cbd5e1';
+      ctx.strokeStyle = '#e2e8f0';
       ctx.lineWidth = 0.5;
       ctx.moveTo(GRID_LEFT + GRID_WIDTH, GRID_TOP + i * ROW_HEIGHT);
       ctx.lineTo(GRID_LEFT + GRID_WIDTH + 65, GRID_TOP + i * ROW_HEIGHT);
@@ -266,8 +274,8 @@ export default function DailyLogSheet({ log, dayNumber }) {
     <div className="daily-log-sheet">
       <div className="log-sheet-header">
         <div className="log-sheet-title">
-          <h3>Day {dayNumber} — {log.date_display}</h3>
-          <span className="log-miles">{log.total_miles > 0 ? `${log.total_miles} miles` : 'No driving'}</span>
+          <h3>Day {dayNumber} - {log.total_miles > 0 ? `${log.total_miles} mi` : 'No driving'}</h3>
+          <span className="log-miles">{log.date_display}</span>
         </div>
         <div className="log-hours-summary">
           <span className="hour-badge off-duty">OFF {log.total_hours?.off_duty?.toFixed(1)}h</span>

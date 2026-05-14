@@ -4,13 +4,13 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
 const STOP_COLORS = {
-  start: '#10b981',
-  pickup: '#3b82f6',
-  dropoff: '#8b5cf6',
-  end: '#ef4444',
-  break: '#eab308',
-  off_duty_reset: '#f59e0b',
-  fuel: '#f97316',
+  start: '#16a34a',
+  pickup: '#2563eb',
+  dropoff: '#334155',
+  end: '#dc2626',
+  break: '#d97706',
+  off_duty_reset: '#d97706',
+  fuel: '#b45309',
 };
 
 const STOP_LABELS = {
@@ -36,22 +36,12 @@ const STOP_ICONS = {
 function createIcon(color, letter) {
   return L.divIcon({
     className: 'custom-marker',
-    html: `<div style="
-      background: ${color};
-      width: 28px; height: 28px;
-      border-radius: 50% 50% 50% 0;
-      transform: rotate(-45deg);
-      border: 3px solid white;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-      display: flex; align-items: center; justify-content: center;
-    ">
-      <span style="transform: rotate(45deg); color: white; font-size: 10px; font-weight: 700;">
-        ${letter}
-      </span>
+    html: `<div class="marker-pin" style="--marker-color: ${color}">
+      <span>${letter}</span>
     </div>`,
-    iconSize: [28, 28],
-    iconAnchor: [14, 28],
-    popupAnchor: [0, -28],
+    iconSize: [32, 32],
+    iconAnchor: [16, 32],
+    popupAnchor: [0, -32],
   });
 }
 
@@ -83,7 +73,7 @@ function formatDuration(hours) {
   return `${Math.round(hours * 60)}m`;
 }
 
-export default function RouteMap({ route, stops, locations }) {
+export default function RouteMap({ route, stops }) {
   const toPickupCoords = (route.to_pickup?.waypoints || []).map(([lng, lat]) => [lat, lng]);
   const toDropoffCoords = (route.to_dropoff?.waypoints || []).map(([lng, lat]) => [lat, lng]);
 
@@ -122,7 +112,7 @@ export default function RouteMap({ route, stops, locations }) {
       <MapContainer
         center={[39.8, -98.5]}
         zoom={4}
-        style={{ height: '100%', width: '100%', borderRadius: '0 0 12px 12px' }}
+        style={{ height: '100%', width: '100%' }}
       >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
@@ -134,13 +124,13 @@ export default function RouteMap({ route, stops, locations }) {
         {toPickupCoords.length > 1 && (
           <Polyline
             positions={toPickupCoords}
-            pathOptions={{ color: '#3b82f6', weight: 4, opacity: 0.8 }}
+            pathOptions={{ color: '#2563eb', weight: 5, opacity: 0.82 }}
           />
         )}
         {toDropoffCoords.length > 1 && (
           <Polyline
             positions={toDropoffCoords}
-            pathOptions={{ color: '#8b5cf6', weight: 4, opacity: 0.8 }}
+            pathOptions={{ color: '#334155', weight: 5, opacity: 0.78 }}
           />
         )}
 

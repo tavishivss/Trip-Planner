@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useMemo } from 'react';
 import axios from 'axios';
 
 const API_BASE = 'http://localhost:8000';
@@ -11,14 +11,63 @@ function debounce(fn, ms) {
   };
 }
 
+function FieldIcon({ type }) {
+  const common = {
+    width: 16,
+    height: 16,
+    viewBox: '0 0 16 16',
+    fill: 'none',
+    stroke: 'currentColor',
+    strokeWidth: 1.8,
+    strokeLinecap: 'round',
+    strokeLinejoin: 'round',
+    'aria-hidden': 'true',
+  };
+
+  if (type === 'pickup') {
+    return (
+      <svg {...common}>
+        <path d="M3 5.5 8 3l5 2.5v5L8 13l-5-2.5v-5Z" />
+        <path d="M3 5.5 8 8l5-2.5" />
+        <path d="M8 8v5" />
+      </svg>
+    );
+  }
+
+  if (type === 'dropoff') {
+    return (
+      <svg {...common}>
+        <path d="M4 13V3.5" />
+        <path d="M4 4h7l-1.5 2L11 8H4" />
+      </svg>
+    );
+  }
+
+  if (type === 'time') {
+    return (
+      <svg {...common}>
+        <circle cx="8" cy="8" r="5.5" />
+        <path d="M8 5v3.2l2 1.2" />
+      </svg>
+    );
+  }
+
+  return (
+    <svg {...common}>
+      <path d="M12.5 6.8c0 3.4-4.5 6.7-4.5 6.7S3.5 10.2 3.5 6.8a4.5 4.5 0 0 1 9 0Z" />
+      <circle cx="8" cy="6.8" r="1.4" />
+    </svg>
+  );
+}
+
 function LocationInput({ label, value, onChange, onSelect, placeholder, icon }) {
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [loading, setLoading] = useState(false);
   const wrapperRef = useRef(null);
 
-  const fetchSuggestions = useCallback(
-    debounce(async (query) => {
+  const fetchSuggestions = useMemo(
+    () => debounce(async (query) => {
       if (query.length < 3) {
         setSuggestions([]);
         return;
@@ -53,7 +102,12 @@ function LocationInput({ label, value, onChange, onSelect, placeholder, icon }) 
 
   return (
     <div className="form-field" ref={wrapperRef}>
-      <label>{icon} {label}</label>
+      <label>
+        <span className="field-label-icon">
+          <FieldIcon type={icon} />
+        </span>
+        <span>{label}</span>
+      </label>
       <div className="input-wrapper">
         <input
           type="text"
@@ -131,7 +185,7 @@ export default function TripForm({ onSubmit, loading, setLoading, setError }) {
         onChange={(v) => { setCurrentLocation(v); setCurrentLocData(null); }}
         onSelect={setCurrentLocData}
         placeholder="e.g. Chicago, IL"
-        icon="📍"
+        icon="current"
       />
 
       <LocationInput
@@ -140,7 +194,7 @@ export default function TripForm({ onSubmit, loading, setLoading, setError }) {
         onChange={(v) => { setPickupLocation(v); setPickupLocData(null); }}
         onSelect={setPickupLocData}
         placeholder="e.g. Dallas, TX"
-        icon="📦"
+        icon="pickup"
       />
 
       <LocationInput
@@ -149,11 +203,16 @@ export default function TripForm({ onSubmit, loading, setLoading, setError }) {
         onChange={(v) => { setDropoffLocation(v); setDropoffLocData(null); }}
         onSelect={setDropoffLocData}
         placeholder="e.g. Los Angeles, CA"
-        icon="🏁"
+        icon="dropoff"
       />
 
       <div className="form-field">
-        <label>⏱️ Current Cycle Used (Hours)</label>
+        <label>
+          <span className="field-label-icon">
+            <FieldIcon type="time" />
+          </span>
+          <span>Current Cycle Used (Hours)</span>
+        </label>
         <input
           type="number"
           min="0"
