@@ -1,4 +1,5 @@
 import { useRef, useEffect } from 'react';
+import { CalendarDays, Clock3, Moon, Timer, Truck } from 'lucide-react';
 
 const STATUS_ROWS = {
   off_duty: 0,
@@ -271,59 +272,89 @@ export default function DailyLogSheet({ log, dayNumber }) {
   const hos = log.hos_summary;
 
   return (
-    <div className="daily-log-sheet">
-      <div className="log-sheet-header">
-        <div className="log-sheet-title">
-          <h3>Day {dayNumber} - {log.total_miles > 0 ? `${log.total_miles} mi` : 'No driving'}</h3>
-          <span className="log-miles">{log.date_display}</span>
+    <article className="dashboard-card overflow-hidden transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_22px_52px_rgba(15,23,42,0.09)]">
+      <div className="flex flex-col gap-5 p-5 sm:flex-row sm:items-start sm:justify-between sm:p-6">
+        <div>
+          <div className="flex items-center gap-2 text-sm font-semibold text-blue-700">
+            <CalendarDays size={16} aria-hidden="true" />
+            {log.date_display}
+          </div>
+          <h3 className="mt-2 text-xl font-semibold text-slate-950">
+            Day {dayNumber} - {log.total_miles > 0 ? `${log.total_miles} mi` : 'No driving'}
+          </h3>
+          <p className="mt-1 text-sm text-slate-500">Generated ELD daily duty-status grid</p>
         </div>
-        <div className="log-hours-summary">
-          <span className="hour-badge off-duty">OFF {log.total_hours?.off_duty?.toFixed(1)}h</span>
-          <span className="hour-badge sleeper">SB {log.total_hours?.sleeper_berth?.toFixed(1)}h</span>
-          <span className="hour-badge driving">D {log.total_hours?.driving?.toFixed(1)}h</span>
-          <span className="hour-badge on-duty">ON {log.total_hours?.on_duty_not_driving?.toFixed(1)}h</span>
+        <div className="flex flex-wrap gap-2 sm:justify-end">
+          <span className="status-pill bg-blue-50 text-blue-700">OFF {log.total_hours?.off_duty?.toFixed(1)}h</span>
+          <span className="status-pill bg-slate-100 text-slate-600">SB {log.total_hours?.sleeper_berth?.toFixed(1)}h</span>
+          <span className="status-pill bg-red-50 text-red-700">D {log.total_hours?.driving?.toFixed(1)}h</span>
+          <span className="status-pill bg-amber-50 text-amber-700">ON {log.total_hours?.on_duty_not_driving?.toFixed(1)}h</span>
         </div>
       </div>
 
-      {/* Calendar-day totals with multi-shift clarification */}
       {hos && (
-        <div className="log-hos-bar">
-          <div className="hos-indicator">
-            <span className="hos-label">Calendar-day driving</span>
-            <div className="hos-bar-track">
-              <div className="hos-bar-fill driving" style={{ width: `${Math.min(100, (hos.driving_hours / 24) * 100)}%` }} />
+        <div className="grid gap-4 px-5 pb-5 sm:grid-cols-2 sm:px-6">
+          <div className="rounded-2xl bg-slate-50 p-4">
+            <div className="mb-3 flex items-center justify-between gap-3">
+              <span className="flex items-center gap-2 text-sm font-medium text-slate-600">
+                <Truck size={16} aria-hidden="true" />
+                Calendar-day driving
+              </span>
+              <span className="text-sm font-semibold tabular-nums text-slate-900">{hos.driving_hours.toFixed(1)}h</span>
             </div>
-            <span className="hos-value">{hos.driving_hours.toFixed(1)}h</span>
+            <div className="h-2 overflow-hidden rounded-full bg-slate-200">
+              <div
+                className="h-full rounded-full bg-red-600 transition-all duration-500"
+                style={{ width: `${Math.min(100, (hos.driving_hours / 24) * 100)}%` }}
+              />
+            </div>
           </div>
-          <div className="hos-indicator">
-            <span className="hos-label">Calendar-day on-duty</span>
-            <div className="hos-bar-track">
-              <div className="hos-bar-fill on-duty" style={{ width: `${Math.min(100, (hos.on_duty_hours / 24) * 100)}%` }} />
+          <div className="rounded-2xl bg-slate-50 p-4">
+            <div className="mb-3 flex items-center justify-between gap-3">
+              <span className="flex items-center gap-2 text-sm font-medium text-slate-600">
+                <Clock3 size={16} aria-hidden="true" />
+                Calendar-day on-duty
+              </span>
+              <span className="text-sm font-semibold tabular-nums text-slate-900">{hos.on_duty_hours.toFixed(1)}h</span>
             </div>
-            <span className="hos-value">{hos.on_duty_hours.toFixed(1)}h</span>
+            <div className="h-2 overflow-hidden rounded-full bg-slate-200">
+              <div
+                className="h-full rounded-full bg-amber-600 transition-all duration-500"
+                style={{ width: `${Math.min(100, (hos.on_duty_hours / 24) * 100)}%` }}
+              />
+            </div>
           </div>
           {hos.driving_hours > 11.01 && (
-            <div className="hos-multi-shift-note">
-              Spans multiple shifts — per-shift limits verified in sidebar
+            <div className="rounded-2xl bg-blue-50 px-4 py-3 text-center text-sm font-medium text-blue-700 sm:col-span-2">
+              Spans multiple shifts - per-shift limits verified in sidebar
             </div>
           )}
         </div>
       )}
 
-      <div className="log-canvas-wrapper">
-        <canvas ref={canvasRef} className="log-canvas" />
+      <div className="overflow-x-auto bg-slate-50 px-5 py-5 sm:px-6">
+        <canvas
+          ref={canvasRef}
+          className="block rounded-2xl bg-white shadow-[0_12px_32px_rgba(15,23,42,0.08)]"
+        />
       </div>
 
       {log.remarks && log.remarks.length > 0 && (
-        <div className="log-remarks">
-          <h4>Remarks</h4>
-          <ul>
+        <div className="p-5 sm:p-6">
+          <h4 className="mb-3 flex items-center gap-2 text-sm font-semibold text-slate-800">
+            <Timer size={16} aria-hidden="true" />
+            Remarks
+          </h4>
+          <ul className="space-y-2">
             {log.remarks.slice(0, 10).map((r, i) => (
-              <li key={i}>{r}</li>
+              <li key={i} className="flex gap-2 text-sm leading-6 text-slate-600">
+                <Moon className="mt-1 shrink-0 text-slate-300" size={14} aria-hidden="true" />
+                <span>{r}</span>
+              </li>
             ))}
           </ul>
         </div>
       )}
-    </div>
+    </article>
   );
 }

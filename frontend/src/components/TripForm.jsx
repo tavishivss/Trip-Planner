@@ -1,7 +1,14 @@
-import { useState, useRef, useMemo } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import axios from 'axios';
+import { Flag, LoaderCircle, Map, MapPin, Package, Timer } from 'lucide-react';
 
 const API_BASE = 'http://localhost:8000';
+
+const locationIcons = {
+  current: MapPin,
+  pickup: Package,
+  dropoff: Flag,
+};
 
 function debounce(fn, ms) {
   let timer;
@@ -11,52 +18,14 @@ function debounce(fn, ms) {
   };
 }
 
-function FieldIcon({ type }) {
-  const common = {
-    width: 16,
-    height: 16,
-    viewBox: '0 0 16 16',
-    fill: 'none',
-    stroke: 'currentColor',
-    strokeWidth: 1.8,
-    strokeLinecap: 'round',
-    strokeLinejoin: 'round',
-    'aria-hidden': 'true',
-  };
-
-  if (type === 'pickup') {
-    return (
-      <svg {...common}>
-        <path d="M3 5.5 8 3l5 2.5v5L8 13l-5-2.5v-5Z" />
-        <path d="M3 5.5 8 8l5-2.5" />
-        <path d="M8 8v5" />
-      </svg>
-    );
-  }
-
-  if (type === 'dropoff') {
-    return (
-      <svg {...common}>
-        <path d="M4 13V3.5" />
-        <path d="M4 4h7l-1.5 2L11 8H4" />
-      </svg>
-    );
-  }
-
-  if (type === 'time') {
-    return (
-      <svg {...common}>
-        <circle cx="8" cy="8" r="5.5" />
-        <path d="M8 5v3.2l2 1.2" />
-      </svg>
-    );
-  }
-
+function FieldLabel({ icon: Icon, children }) {
   return (
-    <svg {...common}>
-      <path d="M12.5 6.8c0 3.4-4.5 6.7-4.5 6.7S3.5 10.2 3.5 6.8a4.5 4.5 0 0 1 9 0Z" />
-      <circle cx="8" cy="6.8" r="1.4" />
-    </svg>
+    <label className="flex items-center gap-2 text-sm font-medium text-slate-600">
+      <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
+        <Icon size={16} strokeWidth={2.1} aria-hidden="true" />
+      </span>
+      <span>{children}</span>
+    </label>
   );
 }
 
@@ -65,6 +34,7 @@ function LocationInput({ label, value, onChange, onSelect, placeholder, icon }) 
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [loading, setLoading] = useState(false);
   const wrapperRef = useRef(null);
+  const Icon = locationIcons[icon] || MapPin;
 
   const fetchSuggestions = useMemo(
     () => debounce(async (query) => {
@@ -101,32 +71,39 @@ function LocationInput({ label, value, onChange, onSelect, placeholder, icon }) 
   };
 
   return (
-    <div className="form-field" ref={wrapperRef}>
-      <label>
-        <span className="field-label-icon">
-          <FieldIcon type={icon} />
-        </span>
-        <span>{label}</span>
-      </label>
-      <div className="input-wrapper">
+    <div className="relative flex flex-col gap-2" ref={wrapperRef}>
+      <FieldLabel icon={Icon}>{label}</FieldLabel>
+      <div className="relative">
         <input
+          className="field-control pr-11"
           type="text"
           value={value}
           onChange={handleChange}
           onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
           onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
           placeholder={placeholder}
+          aria-label={label}
         />
-        {loading && <span className="input-spinner" />}
+        {loading && (
+          <LoaderCircle
+            className="absolute right-4 top-1/2 -mt-2 animate-spin text-blue-600"
+            size={16}
+            aria-hidden="true"
+          />
+        )}
       </div>
       {showSuggestions && suggestions.length > 0 && (
-        <ul className="suggestions-list">
+        <ul className="absolute left-0 right-0 top-full z-30 mt-2 max-h-60 overflow-y-auto rounded-2xl border border-slate-100 bg-white p-2 shadow-2xl shadow-slate-900/10">
           {suggestions.map((s, i) => (
-            <li key={i} onMouseDown={() => handleSelect(s)}>
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="#6b7280">
-                <path d="M7 0C4.24 0 2 2.24 2 5c0 3.75 5 9 5 9s5-5.25 5-9c0-2.76-2.24-5-5-5zm0 6.5a1.5 1.5 0 110-3 1.5 1.5 0 010 3z" />
-              </svg>
-              <span>{s.name}</span>
+            <li key={`${s.name}-${i}`}>
+              <button
+                type="button"
+                onMouseDown={() => handleSelect(s)}
+                className="flex w-full items-start gap-3 rounded-xl px-3 py-2.5 text-left text-sm text-slate-600 transition hover:bg-blue-50 hover:text-slate-950"
+              >
+                <MapPin className="mt-0.5 shrink-0 text-slate-400" size={15} aria-hidden="true" />
+                <span className="leading-5">{s.name}</span>
+              </button>
             </li>
           ))}
         </ul>
@@ -176,66 +153,77 @@ export default function TripForm({ onSubmit, loading, setLoading, setError }) {
   };
 
   return (
-    <form className="trip-form" onSubmit={handleSubmit}>
-      <h2>Trip Details</h2>
-
-      <LocationInput
-        label="Current Location"
-        value={currentLocation}
-        onChange={(v) => { setCurrentLocation(v); setCurrentLocData(null); }}
-        onSelect={setCurrentLocData}
-        placeholder="e.g. Chicago, IL"
-        icon="current"
-      />
-
-      <LocationInput
-        label="Pickup Location"
-        value={pickupLocation}
-        onChange={(v) => { setPickupLocation(v); setPickupLocData(null); }}
-        onSelect={setPickupLocData}
-        placeholder="e.g. Dallas, TX"
-        icon="pickup"
-      />
-
-      <LocationInput
-        label="Drop-off Location"
-        value={dropoffLocation}
-        onChange={(v) => { setDropoffLocation(v); setDropoffLocData(null); }}
-        onSelect={setDropoffLocData}
-        placeholder="e.g. Los Angeles, CA"
-        icon="dropoff"
-      />
-
-      <div className="form-field">
-        <label>
-          <span className="field-label-icon">
-            <FieldIcon type="time" />
-          </span>
-          <span>Current Cycle Used (Hours)</span>
-        </label>
-        <input
-          type="number"
-          min="0"
-          max="70"
-          step="0.5"
-          value={cycleUsed}
-          onChange={(e) => setCycleUsed(e.target.value)}
-          placeholder="0 - 70 hours (70hr/8day cycle)"
-        />
-        <span className="field-hint">Hours already used in the current 70-hour/8-day cycle</span>
+    <form className="dashboard-card p-5 sm:p-6" onSubmit={handleSubmit}>
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h2 className="text-lg font-semibold text-slate-950">Trip Details</h2>
+          <p className="mt-1 text-sm text-slate-500">Build an HOS-compliant route plan.</p>
+        </div>
+        <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">
+          70h / 8d
+        </span>
       </div>
 
-      <button type="submit" className="submit-btn" disabled={loading}>
+      <div className="mt-6 space-y-5">
+        <LocationInput
+          label="Current location"
+          value={currentLocation}
+          onChange={(v) => { setCurrentLocation(v); setCurrentLocData(null); }}
+          onSelect={setCurrentLocData}
+          placeholder="e.g. Chicago, IL"
+          icon="current"
+        />
+
+        <LocationInput
+          label="Pickup location"
+          value={pickupLocation}
+          onChange={(v) => { setPickupLocation(v); setPickupLocData(null); }}
+          onSelect={setPickupLocData}
+          placeholder="e.g. Dallas, TX"
+          icon="pickup"
+        />
+
+        <LocationInput
+          label="Drop-off location"
+          value={dropoffLocation}
+          onChange={(v) => { setDropoffLocation(v); setDropoffLocData(null); }}
+          onSelect={setDropoffLocData}
+          placeholder="e.g. Los Angeles, CA"
+          icon="dropoff"
+        />
+
+        <div className="flex flex-col gap-2">
+          <FieldLabel icon={Timer}>Current cycle used</FieldLabel>
+          <input
+            className="field-control"
+            type="number"
+            min="0"
+            max="70"
+            step="0.5"
+            value={cycleUsed}
+            onChange={(e) => setCycleUsed(e.target.value)}
+            placeholder="0 - 70 hours"
+            aria-label="Current cycle used in hours"
+          />
+          <p className="text-xs leading-5 text-slate-400">
+            Hours already used in the current 70-hour / 8-day cycle.
+          </p>
+        </div>
+      </div>
+
+      <button
+        type="submit"
+        disabled={loading}
+        className="mt-6 inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 text-sm font-semibold text-white shadow-lg shadow-blue-600/20 transition hover:-translate-y-0.5 hover:bg-blue-700 hover:shadow-blue-600/25 disabled:cursor-not-allowed disabled:opacity-70 disabled:shadow-none"
+      >
         {loading ? (
           <>
-            <span className="btn-spinner" />
-            Planning Route...
+            <LoaderCircle className="animate-spin" size={17} aria-hidden="true" />
+            Planning route
           </>
         ) : (
           <>
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-              <path d="M1 3.5L5.5 1l5 2.5L15 1v11.5l-4.5 2.5-5-2.5L1 15V3.5z" />
-            </svg>
+            <Map size={17} aria-hidden="true" />
             Plan Trip
           </>
         )}

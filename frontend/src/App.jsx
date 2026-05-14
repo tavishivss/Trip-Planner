@@ -1,9 +1,129 @@
 import { useState } from 'react';
+import { AlertCircle, ClipboardList, Clock3, Fuel, Map, Route, Timer } from 'lucide-react';
 import TripForm from './components/TripForm';
 import RouteMap from './components/RouteMap';
 import DailyLogSheet from './components/DailyLogSheet';
 import TripSummary from './components/TripSummary';
+import TopNav from './components/dashboard/TopNav';
+import KpiCard from './components/dashboard/KpiCard';
+import TabButton from './components/dashboard/TabButton';
+import { EmptyRoutePreview, PreviewEvents, PreviewLogs, SidebarPreview } from './components/dashboard/PreviewDashboard';
+import { demoKpis } from './data/demoTrip';
 import './App.css';
+
+function getDashboardKpis(tripData) {
+  if (!tripData) {
+    const icons = [Route, Clock3, Timer, Fuel];
+    const tones = ['blue', 'slate', 'emerald', 'amber'];
+    return demoKpis.map((item, index) => ({
+      ...item,
+      icon: icons[index],
+      tone: tones[index],
+      hint: item.trend,
+    }));
+  }
+
+  const fuelStops = tripData.stops.filter((stop) => stop.stop_type === 'fuel').length;
+  return [
+    {
+      label: 'Total distance',
+      value: tripData.route.total_distance_miles?.toLocaleString() || '0',
+      unit: 'mi',
+      hint: 'Calculated across pickup and drop-off legs',
+      icon: Route,
+      tone: 'blue',
+    },
+    {
+      label: 'Drive time',
+      value: tripData.route.total_duration_hours?.toFixed(1) || '0.0',
+      unit: 'hrs',
+      hint: 'Estimated wheel time',
+      icon: Clock3,
+      tone: 'slate',
+    },
+    {
+      label: 'Trip length',
+      value: tripData.daily_logs.length,
+      unit: tripData.daily_logs.length === 1 ? 'day' : 'days',
+      hint: 'Generated ELD log sheets',
+      icon: Timer,
+      tone: 'emerald',
+    },
+    {
+      label: 'Fuel stops',
+      value: fuelStops,
+      unit: 'planned',
+      hint: `${tripData.stops.length} total route events`,
+      icon: Fuel,
+      tone: 'amber',
+    },
+  ];
+}
+
+function ErrorBanner({ error }) {
+  if (!error) return null;
+
+  return (
+    <div className="flex items-start gap-3 rounded-2xl border border-red-100 bg-red-50 p-4 text-sm text-red-700 shadow-sm">
+      <AlertCircle className="mt-0.5 shrink-0" size={18} aria-hidden="true" />
+      <span>{error}</span>
+    </div>
+  );
+}
+
+function DashboardHeader({ tripData }) {
+  return (
+    <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+      <div>
+        <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-3 py-1.5 text-xs font-semibold text-blue-700">
+          <Route size={14} aria-hidden="true" />
+          Logistics SaaS dashboard
+        </div>
+        <h2 className="text-2xl font-semibold tracking-normal text-slate-950 sm:text-3xl">
+          Dispatch route planning
+        </h2>
+        <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-500">
+          Plan HOS-compliant long-haul routes, validate drive windows, and review route events from one clean workspace.
+        </p>
+      </div>
+      <div className="flex flex-wrap gap-2">
+        <span className="status-pill bg-white text-slate-600 ring-1 ring-slate-200">
+          Desktop optimized
+        </span>
+        <span className="status-pill bg-emerald-50 text-emerald-700 ring-1 ring-emerald-100">
+          {tripData ? 'Route generated' : 'Ready to plan'}
+        </span>
+      </div>
+    </div>
+  );
+}
+
+function LogsPanel({ tripData }) {
+  if (!tripData) {
+    return <PreviewLogs />;
+  }
+
+  return (
+    <div className="space-y-6">
+      {tripData.daily_logs.map((log, idx) => (
+        <DailyLogSheet key={`${log.date_display}-${idx}`} log={log} dayNumber={idx + 1} />
+      ))}
+    </div>
+  );
+}
+
+function MapPanel({ tripData }) {
+  if (!tripData) {
+    return (
+      <div className="space-y-6">
+        <EmptyRoutePreview />
+        <PreviewEvents />
+      </div>
+    );
+  }
+
+  return <RouteMap route={tripData.route} stops={tripData.stops} />;
+}
 
 function App() {
   const [tripData, setTripData] = useState(null);
@@ -17,112 +137,54 @@ function App() {
     setError(null);
   };
 
-  return (
-    <div className="app">
-      <header className="app-header">
-        <div className="header-content">
-          <div className="logo">
-            <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-              <rect width="32" height="32" rx="8" fill="#1a56db" />
-              <path d="M8 20L16 8L24 20H8Z" fill="white" opacity="0.9" />
-              <circle cx="16" cy="22" r="3" fill="white" />
-            </svg>
-            <h1>ELD Trip Planner</h1>
-          </div>
-          <p className="tagline">HOS-Compliant Route Planning & Electronic Logging</p>
-        </div>
-      </header>
+  const kpis = getDashboardKpis(tripData);
 
-      <main className="app-main">
-        <div className="sidebar">
+  return (
+    <div className="min-h-screen bg-app-bg text-slate-950">
+      <TopNav />
+
+      <main className="mx-auto grid max-w-[1760px] gap-6 px-4 py-6 sm:px-6 lg:grid-cols-[410px_minmax(0,1fr)] lg:px-8">
+        <aside className="space-y-5 lg:sticky lg:top-[84px] lg:h-[calc(100vh-108px)] lg:overflow-y-auto lg:pr-1">
           <TripForm
             onSubmit={handleTripSubmit}
             loading={loading}
             setLoading={setLoading}
             setError={setError}
           />
-          {error && (
-            <div className="error-banner">
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-                <path d="M8 1a7 7 0 100 14A7 7 0 008 1zM7 4h2v5H7V4zm0 6h2v2H7v-2z" />
-              </svg>
-              {error}
-            </div>
-          )}
-          {tripData && <TripSummary data={tripData} />}
-        </div>
+          <ErrorBanner error={error} />
+          {tripData ? <TripSummary data={tripData} /> : <SidebarPreview />}
+        </aside>
 
-        <div className="content-area">
-          {tripData ? (
-            <>
-              <div className="tab-bar">
-                <button
-                  className={`tab ${activeTab === 'map' ? 'active' : ''}`}
-                  onClick={() => setActiveTab('map')}
-                >
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-                    <path d="M1 3.5L5.5 1l5 2.5L15 1v11.5l-4.5 2.5-5-2.5L1 15V3.5z" />
-                  </svg>
-                  Route Map
-                </button>
-                <button
-                  className={`tab ${activeTab === 'logs' ? 'active' : ''}`}
-                  onClick={() => setActiveTab('logs')}
-                >
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-                    <path d="M2 2h12v12H2V2zm2 3h8v1H4V5zm0 3h8v1H4V8zm0 3h5v1H4v-1z" />
-                  </svg>
-                  Daily Logs ({tripData.daily_logs.length})
-                </button>
-              </div>
+        <section className="min-w-0 space-y-6">
+          <DashboardHeader tripData={tripData} />
 
-              <div className="tab-content">
-                {activeTab === 'map' && (
-                  <RouteMap
-                    route={tripData.route}
-                    stops={tripData.stops}
-                  />
-                )}
-                {activeTab === 'logs' && (
-                  <div className="logs-container">
-                    {tripData.daily_logs.map((log, idx) => (
-                      <DailyLogSheet key={idx} log={log} dayNumber={idx + 1} />
-                    ))}
-                  </div>
-                )}
-              </div>
-            </>
-          ) : (
-            <div className="empty-state">
-              <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
-                <circle cx="40" cy="40" r="36" stroke="#d1d5db" strokeWidth="2" fill="none" />
-                <path d="M25 50L40 20L55 50H25Z" stroke="#9ca3af" strokeWidth="2" fill="none" />
-                <circle cx="40" cy="55" r="4" stroke="#9ca3af" strokeWidth="2" fill="none" />
-                <path d="M30 35h20M35 42h10" stroke="#9ca3af" strokeWidth="1.5" />
-              </svg>
-              <h2>Plan Your Trip</h2>
-              <p>Enter your trip details on the left to generate an HOS-compliant route with ELD daily log sheets.</p>
-              <div className="features-grid">
-                <div className="feature">
-                  <strong>Route Planning</strong>
-                  <span>Optimized routes with mandatory stops</span>
-                </div>
-                <div className="feature">
-                  <strong>HOS Compliance</strong>
-                  <span>11hr drive / 14hr window / 70hr cycle</span>
-                </div>
-                <div className="feature">
-                  <strong>ELD Logs</strong>
-                  <span>Auto-generated daily log sheets</span>
-                </div>
-                <div className="feature">
-                  <strong>Fuel Stops</strong>
-                  <span>Scheduled every 1,000 miles</span>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
+          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+            {kpis.map((item) => (
+              <KpiCard
+                key={item.label}
+                icon={item.icon}
+                label={item.label}
+                value={item.value}
+                unit={item.unit}
+                hint={item.hint}
+                tone={item.tone}
+              />
+            ))}
+          </div>
+
+          <div className="flex rounded-2xl bg-slate-100 p-1">
+            <TabButton active={activeTab === 'map'} icon={Map} onClick={() => setActiveTab('map')}>
+              Route Map
+            </TabButton>
+            <TabButton active={activeTab === 'logs'} icon={ClipboardList} onClick={() => setActiveTab('logs')}>
+              Daily Logs {tripData ? `(${tripData.daily_logs.length})` : ''}
+            </TabButton>
+          </div>
+
+          <div className="transition duration-200">
+            {activeTab === 'map' ? <MapPanel tripData={tripData} /> : <LogsPanel tripData={tripData} />}
+          </div>
+        </section>
       </main>
     </div>
   );

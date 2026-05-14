@@ -1,3 +1,37 @@
+import { Activity, Clock3, Fuel, Route, ShieldCheck } from 'lucide-react';
+
+const dotClasses = {
+  driving: 'bg-red-600',
+  pickup: 'bg-blue-600',
+  dropoff: 'bg-slate-600',
+  fuel: 'bg-amber-600',
+  break: 'bg-amber-500',
+  reset: 'bg-emerald-600',
+  duty: 'bg-amber-600',
+  off: 'bg-blue-600',
+};
+
+function SummaryMetric({ label, value }) {
+  return (
+    <div className="border-b border-slate-100 pb-4">
+      <p className="text-2xl font-semibold leading-none text-slate-950">{value}</p>
+      <p className="mt-2 text-xs font-medium text-slate-400">{label}</p>
+    </div>
+  );
+}
+
+function BreakdownRow({ tone, label, value, total }) {
+  return (
+    <div className={`flex items-center gap-3 py-1 ${total ? 'mt-1 border-t border-slate-200 pt-3' : ''}`}>
+      <span className={`h-2.5 w-2.5 shrink-0 rounded-full ${dotClasses[tone] || 'bg-slate-400'}`} />
+      <span className={`min-w-0 flex-1 text-sm ${total ? 'font-semibold text-slate-800' : 'text-slate-500'}`}>
+        {label}
+      </span>
+      <span className="text-sm font-semibold tabular-nums text-slate-900">{value}</span>
+    </div>
+  );
+}
+
 export default function TripSummary({ data }) {
   const { route, stops, daily_logs, cycle_info, shifts, time_breakdown } = data;
 
@@ -5,174 +39,143 @@ export default function TripSummary({ data }) {
   const resetStops = stops.filter((s) => s.stop_type === 'off_duty_reset');
 
   return (
-    <div className="trip-summary">
-      <h3>Trip Summary</h3>
-
-      <div className="summary-grid">
-        <div className="summary-item">
-          <span className="summary-label">Total Distance</span>
-          <span className="summary-value">{route.total_distance_miles?.toLocaleString()} mi</span>
+    <section className="dashboard-card p-5 sm:p-6">
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h2 className="text-lg font-semibold text-slate-950">Trip Summary</h2>
+          <p className="mt-1 text-sm text-slate-500">Live route totals and compliance status.</p>
         </div>
-        <div className="summary-item">
-          <span className="summary-label">Est. Drive Time</span>
-          <span className="summary-value">{route.total_duration_hours?.toFixed(1)} hrs</span>
-        </div>
-        <div className="summary-item">
-          <span className="summary-label">Total Days</span>
-          <span className="summary-value">{daily_logs.length}</span>
-        </div>
-        <div className="summary-item">
-          <span className="summary-label">Total Stops</span>
-          <span className="summary-value">{stops.length}</span>
+        <div className="rounded-2xl bg-emerald-50 p-3 text-emerald-700">
+          <ShieldCheck size={20} aria-hidden="true" />
         </div>
       </div>
 
-      {/* Detailed Time Breakdown */}
+      <div className="mt-6 grid grid-cols-2 gap-5">
+        <SummaryMetric label="Total distance" value={`${route.total_distance_miles?.toLocaleString()} mi`} />
+        <SummaryMetric label="Drive time" value={`${route.total_duration_hours?.toFixed(1)} hrs`} />
+        <SummaryMetric label="Duration" value={`${daily_logs.length} days`} />
+        <SummaryMetric label="Stops" value={stops.length} />
+      </div>
+
       {time_breakdown && (
-        <div className="time-breakdown">
-          <h4>On-Duty Time Breakdown</h4>
-          <div className="breakdown-rows">
-            <div className="breakdown-row">
-              <span className="breakdown-dot driving" />
-              <span className="breakdown-label">Driving</span>
-              <span className="breakdown-value">{time_breakdown.driving} hrs</span>
-            </div>
-            <div className="breakdown-row">
-              <span className="breakdown-dot pickup" />
-              <span className="breakdown-label">Pickup (loading)</span>
-              <span className="breakdown-value">{time_breakdown.pickup} hrs</span>
-            </div>
-            <div className="breakdown-row">
-              <span className="breakdown-dot dropoff" />
-              <span className="breakdown-label">Drop-off (unloading)</span>
-              <span className="breakdown-value">{time_breakdown.dropoff} hrs</span>
-            </div>
-            <div className="breakdown-row">
-              <span className="breakdown-dot fuel" />
-              <span className="breakdown-label">Fueling</span>
-              <span className="breakdown-value">{time_breakdown.fueling} hrs</span>
-            </div>
-            <div className="breakdown-row total">
-              <span className="breakdown-dot on-duty" />
-              <span className="breakdown-label">Total On-Duty</span>
-              <span className="breakdown-value">{time_breakdown.total_on_duty} hrs</span>
-            </div>
+        <div className="mt-6 rounded-2xl bg-slate-50 p-4">
+          <div className="mb-3 flex items-center gap-2 text-sm font-semibold text-slate-800">
+            <Clock3 size={16} aria-hidden="true" />
+            On-duty breakdown
           </div>
-          <div className="breakdown-rows" style={{ marginTop: '8px' }}>
-            <div className="breakdown-row">
-              <span className="breakdown-dot break" />
-              <span className="breakdown-label">30-min Breaks ({breakStops.length})</span>
-              <span className="breakdown-value">{time_breakdown.breaks_30min} hrs</span>
-            </div>
-            <div className="breakdown-row">
-              <span className="breakdown-dot reset" />
-              <span className="breakdown-label">Off-Duty Resets ({resetStops.length})</span>
-              <span className="breakdown-value">{time_breakdown.off_duty_resets} hrs</span>
-            </div>
-            <div className="breakdown-row total">
-              <span className="breakdown-dot off-duty" />
-              <span className="breakdown-label">Total Off-Duty</span>
-              <span className="breakdown-value">{time_breakdown.total_off_duty} hrs</span>
-            </div>
+          <div className="space-y-1">
+            <BreakdownRow tone="driving" label="Driving" value={`${time_breakdown.driving} hrs`} />
+            <BreakdownRow tone="pickup" label="Pickup loading" value={`${time_breakdown.pickup} hrs`} />
+            <BreakdownRow tone="dropoff" label="Drop-off unloading" value={`${time_breakdown.dropoff} hrs`} />
+            <BreakdownRow tone="fuel" label="Fueling" value={`${time_breakdown.fueling} hrs`} />
+            <BreakdownRow tone="duty" label="Total on-duty" value={`${time_breakdown.total_on_duty} hrs`} total />
+          </div>
+          <div className="mt-4 space-y-1 border-t border-slate-200 pt-3">
+            <BreakdownRow
+              tone="break"
+              label={`30-min breaks (${breakStops.length})`}
+              value={`${time_breakdown.breaks_30min} hrs`}
+            />
+            <BreakdownRow
+              tone="reset"
+              label={`Off-duty resets (${resetStops.length})`}
+              value={`${time_breakdown.off_duty_resets} hrs`}
+            />
+            <BreakdownRow tone="off" label="Total off-duty" value={`${time_breakdown.total_off_duty} hrs`} total />
           </div>
         </div>
       )}
 
-      {/* 70hr/8day Cycle Tracking */}
       {cycle_info && (
-        <div className="cycle-tracker">
-          <h4>70-Hour / 8-Day Cycle</h4>
-          <div className="cycle-bar-wrapper">
-            <div className="cycle-bar">
+        <div className="mt-6 rounded-2xl bg-slate-50 p-4">
+          <div className="mb-3 flex items-center gap-2 text-sm font-semibold text-slate-800">
+            <Activity size={16} aria-hidden="true" />
+            70-hour cycle
+          </div>
+          <div className="h-3 overflow-hidden rounded-full bg-slate-200">
+            <div className="flex h-full">
               <div
-                className="cycle-bar-prior"
+                className="h-full bg-slate-400 transition-all duration-500"
                 style={{ width: `${(cycle_info.cycle_start_used / cycle_info.cycle_limit) * 100}%` }}
               />
               <div
-                className="cycle-bar-trip"
+                className="h-full bg-blue-600 transition-all duration-500"
                 style={{ width: `${(cycle_info.cycle_added_this_trip / cycle_info.cycle_limit) * 100}%` }}
               />
             </div>
-            <div className="cycle-labels">
-              <span>0h</span>
-              <span>{cycle_info.cycle_limit}h</span>
-            </div>
           </div>
-          <div className="cycle-details">
-            <div className="cycle-detail">
-              <span className="cycle-dot prior" />
-              <span>Prior: {cycle_info.cycle_start_used}h</span>
-            </div>
-            <div className="cycle-detail">
-              <span className="cycle-dot trip" />
-              <span>This trip: {cycle_info.cycle_added_this_trip}h</span>
-            </div>
-            <div className="cycle-detail">
-              <span className="cycle-dot remaining" />
-              <span>Remaining: {cycle_info.cycle_remaining}h</span>
-            </div>
+          <div className="mt-3 grid grid-cols-3 gap-2 text-xs text-slate-500">
+            <span>Prior: {cycle_info.cycle_start_used}h</span>
+            <span className="text-center">Trip: {cycle_info.cycle_added_this_trip}h</span>
+            <span className="text-right">Left: {cycle_info.cycle_remaining}h</span>
           </div>
         </div>
       )}
 
-      {/* Per-Shift HOS Compliance */}
       {shifts && shifts.length > 0 && (
-        <div className="day-breakdown">
-          <h4>Per-Shift HOS Compliance</h4>
-          {shifts.map((shift, idx) => {
-            const dPct = Math.min(100, (shift.driving_hours / shift.driving_limit) * 100);
-            const wPct = Math.min(100, (shift.window_hours / shift.window_limit) * 100);
-            return (
-              <div key={idx} className="day-row">
-                <span className="day-label">
-                  Shift {shift.shift_number}
-                </span>
-                <div className="day-bars">
-                  <div className="day-bar-group">
-                    <span className={`bar-label ${shift.driving_ok ? 'ok' : 'alert'}`}>
-                      Drive {shift.driving_hours}/{shift.driving_limit}h
-                      {shift.driving_ok ? ' \u2713' : ' \u2717'}
+        <div className="mt-6 rounded-2xl bg-slate-50 p-4">
+          <div className="mb-4 text-sm font-semibold text-slate-800">Per-shift HOS compliance</div>
+          <div className="space-y-4">
+            {shifts.map((shift) => {
+              const dPct = Math.min(100, (shift.driving_hours / shift.driving_limit) * 100);
+              const wPct = Math.min(100, (shift.window_hours / shift.window_limit) * 100);
+              return (
+                <div key={shift.shift_number} className="space-y-2">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="font-semibold text-slate-700">Shift {shift.shift_number}</span>
+                    <span className={shift.driving_ok && shift.window_ok ? 'text-emerald-600' : 'text-red-600'}>
+                      {shift.driving_ok && shift.window_ok ? 'Compliant' : 'Review'}
                     </span>
-                    <div className="mini-bar">
-                      <div className="mini-bar-fill driving" style={{ width: `${dPct}%` }} />
-                    </div>
                   </div>
-                  <div className="day-bar-group">
-                    <span className={`bar-label ${shift.window_ok ? 'ok' : 'alert'}`}>
-                      Window {shift.window_hours}/{shift.window_limit}h
-                      {shift.window_ok ? ' \u2713' : ' \u2717'}
-                    </span>
-                    <div className="mini-bar">
-                      <div className="mini-bar-fill on-duty" style={{ width: `${wPct}%` }} />
+                  <div className="space-y-1.5">
+                    <div className="flex items-center gap-2">
+                      <span className="w-20 text-right text-xs text-slate-400">
+                        Drive {shift.driving_hours}/{shift.driving_limit}h
+                      </span>
+                      <div className="h-2 flex-1 overflow-hidden rounded-full bg-slate-200">
+                        <div className="h-full rounded-full bg-red-600" style={{ width: `${dPct}%` }} />
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="w-20 text-right text-xs text-slate-400">
+                        Window {shift.window_hours}/{shift.window_limit}h
+                      </span>
+                      <div className="h-2 flex-1 overflow-hidden rounded-full bg-slate-200">
+                        <div className="h-full rounded-full bg-amber-600" style={{ width: `${wPct}%` }} />
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
       )}
 
-      <div className="route-legs">
-        <div className="leg">
-          <div className="leg-color pickup" />
-          <div className="leg-info">
-            <span className="leg-label">To Pickup</span>
-            <span className="leg-detail">
-              {route.to_pickup?.distance_miles?.toLocaleString()} mi &middot; {route.to_pickup?.duration_hours?.toFixed(1)} hrs
-            </span>
+      <div className="mt-6 grid gap-3">
+        <div className="flex items-center gap-3 rounded-2xl bg-slate-50 p-4">
+          <div className="rounded-xl bg-blue-50 p-2.5 text-blue-600">
+            <Route size={18} aria-hidden="true" />
+          </div>
+          <div>
+            <p className="text-sm font-semibold text-slate-950">To pickup</p>
+            <p className="text-xs text-slate-500">
+              {route.to_pickup?.distance_miles?.toLocaleString()} mi - {route.to_pickup?.duration_hours?.toFixed(1)} hrs
+            </p>
           </div>
         </div>
-        <div className="leg">
-          <div className="leg-color dropoff" />
-          <div className="leg-info">
-            <span className="leg-label">To Drop-off</span>
-            <span className="leg-detail">
-              {route.to_dropoff?.distance_miles?.toLocaleString()} mi &middot; {route.to_dropoff?.duration_hours?.toFixed(1)} hrs
-            </span>
+        <div className="flex items-center gap-3 rounded-2xl bg-slate-50 p-4">
+          <div className="rounded-xl bg-slate-200 p-2.5 text-slate-700">
+            <Fuel size={18} aria-hidden="true" />
+          </div>
+          <div>
+            <p className="text-sm font-semibold text-slate-950">To drop-off</p>
+            <p className="text-xs text-slate-500">
+              {route.to_dropoff?.distance_miles?.toLocaleString()} mi - {route.to_dropoff?.duration_hours?.toFixed(1)} hrs
+            </p>
           </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 }
