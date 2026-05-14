@@ -72,6 +72,54 @@
   color: #86d0fd !important;
 }
 
+.duty-pill-off {
+  color: #2563eb;
+  background: #eff6ff;
+  border: 1px solid rgba(147, 197, 253, 0.55);
+}
+
+.duty-pill-sleeper {
+  color: #475569;
+  background: #f1f5f9;
+  border: 1px solid rgba(203, 213, 225, 0.72);
+}
+
+.duty-pill-driving {
+  color: #b91c1c;
+  background: #fef2f2;
+  border: 1px solid rgba(252, 165, 165, 0.62);
+}
+
+.duty-pill-on-duty {
+  color: #b45309;
+  background: #fffbeb;
+  border: 1px solid rgba(252, 211, 77, 0.68);
+}
+
+[data-theme='dark'] .duty-pill-off {
+  color: #86d0fd;
+  background: rgba(134, 208, 253, 0.14);
+  border-color: rgba(134, 208, 253, 0.3);
+}
+
+[data-theme='dark'] .duty-pill-sleeper {
+  color: #cbd5e1;
+  background: rgba(148, 163, 184, 0.14);
+  border-color: rgba(148, 163, 184, 0.28);
+}
+
+[data-theme='dark'] .duty-pill-driving {
+  color: #fca5a5;
+  background: rgba(248, 113, 113, 0.14);
+  border-color: rgba(248, 113, 113, 0.3);
+}
+
+[data-theme='dark'] .duty-pill-on-duty {
+  color: #fcd34d;
+  background: rgba(245, 158, 11, 0.14);
+  border-color: rgba(245, 158, 11, 0.3);
+}
+
 [data-theme='dark'] body {
   background: #0b1120;
   color: #e5e7eb;

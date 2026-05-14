@@ -257,10 +257,10 @@ export default function DailyLogSheet({ log, dayNumber }) {
           <p className="mt-1 text-sm text-slate-500">Generated ELD daily duty-status grid</p>
         </div>
         <div className="flex flex-wrap gap-2 sm:justify-end">
-          <span className="status-pill bg-blue-50 theme-blue-accent shadow-sm ring-1">OFF {log.total_hours?.off_duty?.toFixed(1)}h</span>
-          <span className="status-pill bg-slate-100 text-slate-600">SB {log.total_hours?.sleeper_berth?.toFixed(1)}h</span>
-          <span className="status-pill bg-red-50 text-red-700">D {log.total_hours?.driving?.toFixed(1)}h</span>
-          <span className="status-pill bg-amber-50 text-amber-700">ON {log.total_hours?.on_duty_not_driving?.toFixed(1)}h</span>
+          <span className="status-pill duty-pill-off">OFF {log.total_hours?.off_duty?.toFixed(1)}h</span>
+          <span className="status-pill duty-pill-sleeper">SB {log.total_hours?.sleeper_berth?.toFixed(1)}h</span>
+          <span className="status-pill duty-pill-driving">D {log.total_hours?.driving?.toFixed(1)}h</span>
+          <span className="status-pill duty-pill-on-duty">ON {log.total_hours?.on_duty_not_driving?.toFixed(1)}h</span>
         </div>
       </div>
 
