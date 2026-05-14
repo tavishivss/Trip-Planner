@@ -159,9 +159,6 @@ export default function TripForm({ onSubmit, loading, setLoading, setError }) {
           <h2 className="text-lg font-semibold text-slate-950">Trip Details</h2>
           <p className="mt-1 text-sm text-slate-500">Build an HOS-compliant route plan.</p>
         </div>
-        <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">
-          70h / 8d
-        </span>
       </div>
 
       <div className="mt-6 space-y-5">

@@ -149,10 +149,6 @@ export function SidebarPreview() {
           <span>Fuel cadence</span>
           <span className="font-semibold text-slate-950">1,000 mi</span>
         </div>
-        <div className="flex items-center justify-between">
-          <span>Cycle rule</span>
-          <span className="font-semibold text-slate-950">70h / 8d</span>
-        </div>
       </div>
     </section>
   );

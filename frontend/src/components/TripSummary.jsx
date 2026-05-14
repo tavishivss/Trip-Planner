@@ -11,15 +11,6 @@ const dotClasses = {
   off: 'bg-blue-600',
 };
 
-function SummaryMetric({ label, value }) {
-  return (
-    <div className="border-b border-slate-100 pb-4">
-      <p className="text-2xl font-semibold leading-none text-slate-950">{value}</p>
-      <p className="mt-2 text-xs font-medium text-slate-400">{label}</p>
-    </div>
-  );
-}
-
 function BreakdownRow({ tone, label, value, total }) {
   return (
     <div className={`flex items-center gap-3 py-1 ${total ? 'mt-1 border-t border-slate-200 pt-3' : ''}`}>
@@ -33,7 +24,7 @@ function BreakdownRow({ tone, label, value, total }) {
 }
 
 export default function TripSummary({ data }) {
-  const { route, stops, daily_logs, cycle_info, shifts, time_breakdown } = data;
+  const { route, stops, cycle_info, shifts, time_breakdown } = data;
 
   const breakStops = stops.filter((s) => s.stop_type === 'break');
   const resetStops = stops.filter((s) => s.stop_type === 'off_duty_reset');
@@ -48,13 +39,6 @@ export default function TripSummary({ data }) {
         <div className="rounded-2xl bg-emerald-50 p-3 text-emerald-700">
           <ShieldCheck size={20} aria-hidden="true" />
         </div>
-      </div>
-
-      <div className="mt-6 grid grid-cols-2 gap-5">
-        <SummaryMetric label="Total distance" value={`${route.total_distance_miles?.toLocaleString()} mi`} />
-        <SummaryMetric label="Drive time" value={`${route.total_duration_hours?.toFixed(1)} hrs`} />
-        <SummaryMetric label="Duration" value={`${daily_logs.length} days`} />
-        <SummaryMetric label="Stops" value={stops.length} />
       </div>
 
       {time_breakdown && (
