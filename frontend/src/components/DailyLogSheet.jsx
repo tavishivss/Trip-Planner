@@ -247,7 +247,7 @@ export default function DailyLogSheet({ log, dayNumber }) {
     <article className="dashboard-card overflow-hidden transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_22px_52px_rgba(15,23,42,0.09)]">
       <div className="flex flex-col gap-5 p-5 sm:flex-row sm:items-start sm:justify-between sm:p-6">
         <div>
-          <div className="flex items-center gap-2 text-sm font-semibold text-blue-700">
+          <div className="flex items-center gap-2 text-sm font-semibold theme-blue-accent">
             <CalendarDays size={16} aria-hidden="true" />
             {log.date_display}
           </div>
@@ -257,7 +257,7 @@ export default function DailyLogSheet({ log, dayNumber }) {
           <p className="mt-1 text-sm text-slate-500">Generated ELD daily duty-status grid</p>
         </div>
         <div className="flex flex-wrap gap-2 sm:justify-end">
-          <span className="status-pill bg-blue-50 text-blue-700">OFF {log.total_hours?.off_duty?.toFixed(1)}h</span>
+          <span className="status-pill bg-blue-50 theme-blue-accent shadow-sm ring-1">OFF {log.total_hours?.off_duty?.toFixed(1)}h</span>
           <span className="status-pill bg-slate-100 text-slate-600">SB {log.total_hours?.sleeper_berth?.toFixed(1)}h</span>
           <span className="status-pill bg-red-50 text-red-700">D {log.total_hours?.driving?.toFixed(1)}h</span>
           <span className="status-pill bg-amber-50 text-amber-700">ON {log.total_hours?.on_duty_not_driving?.toFixed(1)}h</span>

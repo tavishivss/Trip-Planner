@@ -1,6 +1,25 @@
-import { Bell, Settings, Truck } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Moon, Sun, Truck } from 'lucide-react';
+
+function getInitialTheme() {
+  if (typeof window === 'undefined') return 'light';
+
+  const savedTheme = window.localStorage.getItem('trip-planner-theme');
+  if (savedTheme === 'dark' || savedTheme === 'light') {
+    return savedTheme;
+  }
+
+  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+}
 
 export default function TopNav() {
+  const [theme, setTheme] = useState(getInitialTheme);
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme;
+    window.localStorage.setItem('trip-planner-theme', theme);
+  }, [theme]);
+
   return (
     <header className="sticky top-0 z-50 border-b border-slate-200/60 bg-white/70 shadow-[0_10px_30px_rgba(15,23,42,0.035)] backdrop-blur-xl">
       <div className="mx-auto flex max-w-[1760px] items-center justify-between gap-6 px-5 py-3.5 sm:px-8 lg:px-10">
@@ -19,11 +38,23 @@ export default function TopNav() {
         </div>
 
         <div className="flex items-center gap-1.5 rounded-2xl border border-slate-200/70 bg-white/60 p-1 shadow-sm">
-          <button className="nav-button" type="button" aria-label="Notifications">
-            <Bell size={18} strokeWidth={2.1} aria-hidden="true" />
+          <button
+            className={`nav-button ${theme === 'light' ? 'nav-button-active' : ''}`}
+            type="button"
+            aria-label="Use light mode"
+            aria-pressed={theme === 'light'}
+            onClick={() => setTheme('light')}
+          >
+            <Sun size={18} strokeWidth={2.1} aria-hidden="true" />
           </button>
-          <button className="nav-button" type="button" aria-label="Settings">
-            <Settings size={18} strokeWidth={2.1} aria-hidden="true" />
+          <button
+            className={`nav-button ${theme === 'dark' ? 'nav-button-active' : ''}`}
+            type="button"
+            aria-label="Use dark mode"
+            aria-pressed={theme === 'dark'}
+            onClick={() => setTheme('dark')}
+          >
+            <Moon size={18} strokeWidth={2.1} aria-hidden="true" />
           </button>
         </div>
       </div>

@@ -58,6 +58,98 @@
   }
 }
 
+.nav-button-active {
+  background: #2563eb !important;
+  color: #ffffff !important;
+  box-shadow: 0 8px 18px rgba(37, 99, 235, 0.22);
+}
+
+.theme-blue-accent {
+  color: #2563eb;
+}
+
+[data-theme='dark'] .theme-blue-accent {
+  color: #86d0fd !important;
+}
+
+[data-theme='dark'] body {
+  background: #0b1120;
+  color: #e5e7eb;
+}
+
+[data-theme='dark'] .bg-app-bg {
+  background-color: #0b1120 !important;
+}
+
+[data-theme='dark'] header {
+  background: rgba(15, 23, 42, 0.76) !important;
+  border-color: rgba(51, 65, 85, 0.72) !important;
+  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.22);
+}
+
+[data-theme='dark'] .dashboard-card,
+[data-theme='dark'] .soft-card,
+[data-theme='dark'] .bg-white {
+  background-color: #111827 !important;
+  border-color: rgba(51, 65, 85, 0.78) !important;
+}
+
+[data-theme='dark'] .bg-white\/60,
+[data-theme='dark'] .bg-white\/70 {
+  background-color: rgba(15, 23, 42, 0.72) !important;
+}
+
+[data-theme='dark'] .bg-slate-50,
+[data-theme='dark'] .bg-slate-100 {
+  background-color: #172033 !important;
+}
+
+[data-theme='dark'] .text-slate-950,
+[data-theme='dark'] .text-slate-900,
+[data-theme='dark'] .text-slate-800 {
+  color: #f8fafc !important;
+}
+
+[data-theme='dark'] .text-slate-700,
+[data-theme='dark'] .text-slate-600,
+[data-theme='dark'] .text-slate-500 {
+  color: #cbd5e1 !important;
+}
+
+[data-theme='dark'] .text-slate-400 {
+  color: #94a3b8 !important;
+}
+
+[data-theme='dark'] .border-slate-200\/70,
+[data-theme='dark'] .border-slate-200\/60,
+[data-theme='dark'] .border-slate-100 {
+  border-color: rgba(51, 65, 85, 0.78) !important;
+}
+
+[data-theme='dark'] .field-control {
+  background-color: #0f172a !important;
+  border-color: rgba(51, 65, 85, 0.88) !important;
+  color: #f8fafc !important;
+}
+
+[data-theme='dark'] .field-control::placeholder {
+  color: #64748b;
+}
+
+[data-theme='dark'] .empty-state-map {
+  background:
+    radial-gradient(circle at 50% 42%, rgba(37, 99, 235, 0.12), transparent 42%),
+    linear-gradient(180deg, #0b1120 0%, #111827 100%);
+}
+
+[data-theme='dark'] .empty-state-map::before {
+  opacity: 0.04;
+}
+
+[data-theme='dark'] .empty-state-map::after {
+  opacity: 0.2;
+}
+
 .empty-state-map {
   position: relative;
   overflow: hidden;
