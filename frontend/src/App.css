@@ -156,20 +156,34 @@
     linear-gradient(90deg, rgba(148, 163, 184, 0.13) 1px, transparent 1px);
   background-size: 48px 48px;
   mask-image: radial-gradient(circle at center, #000 0%, transparent 72%);
-  opacity: 0.42;
+  opacity: 0.24;
 }
 
 .splash-loader::after {
-  background-image: url("data:image/svg+xml,%3Csvg width='720' height='220' viewBox='0 0 720 220' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M44 152 C154 60 238 64 332 126 S536 220 676 80' stroke='%2393C5FD' stroke-width='3' stroke-linecap='round' stroke-dasharray='10 14'/%3E%3Ccircle cx='44' cy='152' r='5' fill='%23BFDBFE'/%3E%3Ccircle cx='676' cy='80' r='5' fill='%23BFDBFE'/%3E%3C/svg%3E");
+  display: none;
+}
+
+.splash-world-map {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image: url('../map.svg');
   background-position: center;
   background-repeat: no-repeat;
-  background-size: min(720px, 92vw) auto;
-  opacity: 0.24;
+  background-size: cover;
+  opacity: 0.07;
+  transform: scale(1.04);
 }
 
 .splash-loader > * {
   position: relative;
   z-index: 1;
+}
+
+.splash-loader > .splash-world-map {
+  position: absolute;
+  z-index: 0;
 }
 
 .splash-route {

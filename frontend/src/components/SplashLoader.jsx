@@ -38,6 +38,8 @@ export default function SplashLoader({
       aria-live="polite"
       aria-label="Loading route planner"
     >
+      <div className="splash-world-map" aria-hidden="true" />
+
       <div
         className={`w-full max-w-md transition duration-500 ${
           isExiting ? 'translate-y-2 scale-[0.98] opacity-90' : 'translate-y-0 scale-100 opacity-100'
@@ -45,7 +47,7 @@ export default function SplashLoader({
       >
         <div className="splash-route mx-auto" aria-hidden="true">
           <div className="relative h-12">
-            <div className="splash-truck absolute left-0 top-0 flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-blue-600 shadow-[0_12px_28px_rgba(37,99,235,0.18)] ring-1 ring-blue-100">
+            <div className="splash-truck absolute left-0 top-0 flex h-12 w-12 items-center justify-center text-blue-600 drop-shadow-[0_8px_12px_rgba(37,99,235,0.22)]">
               <Icon size={24} strokeWidth={2.2} />
             </div>
           </div>
