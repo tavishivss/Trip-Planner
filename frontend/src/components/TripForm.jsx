@@ -221,7 +221,7 @@ export default function TripForm({ onSubmit, loading, setLoading, setError }) {
         ) : (
           <>
             <Map size={17} aria-hidden="true" />
-            Plan Trip
+            Plan
           </>
         )}
       </button>

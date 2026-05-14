@@ -88,7 +88,7 @@ function EmptyState() {
         Plan Your Trip
       </h2>
       <p className="mt-3 max-w-xl text-sm leading-6 text-slate-600 sm:text-base">
-        Enter your trip details on the left to generate an HOS-compliant route with ELD daily log sheets.
+         Build compliant routes with intelligent trip planning and automated ELD log generation.
       </p>
     </div>
   );
