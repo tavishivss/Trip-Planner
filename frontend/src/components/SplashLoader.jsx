@@ -29,7 +29,7 @@ export default function SplashLoader({
 
   return (
     <section
-      className={`fixed inset-0 z-[9999] grid place-items-center overflow-hidden bg-app-bg px-6 transition-opacity duration-500 ${
+      className={`splash-loader fixed inset-0 z-[9999] grid place-items-center overflow-hidden bg-app-bg px-6 transition-opacity duration-500 ${
         isExiting ? 'opacity-0' : 'opacity-100'
       }`}
       style={{ '--splash-duration': `${duration}ms` }}
@@ -50,8 +50,9 @@ export default function SplashLoader({
             </div>
           </div>
 
-          <div className="relative mt-2 h-2 overflow-hidden rounded-full bg-slate-200">
-            <div className="splash-progress-fill h-full rounded-full bg-blue-600" />
+          <div className="splash-progress-track relative mt-2 h-2.5 overflow-hidden rounded-full">
+            <div className="splash-progress-fill h-full rounded-full" />
+            <div className="splash-progress-dot" />
           </div>
 
           <div className="mt-3 flex items-center justify-between text-[11px] font-medium uppercase tracking-[0.14em] text-slate-400">
