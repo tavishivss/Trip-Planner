@@ -76,7 +76,7 @@ function DashboardHeader() {
 function EmptyState() {
   return (
     <div className="flex min-h-[calc(100vh-104px)] flex-col items-center justify-center px-5 py-10 text-center sm:px-8">
-      <svg className="mb-5 h-14 w-14 opacity-60" viewBox="0 0 80 80" fill="none" aria-hidden="true">
+      <svg className="mb-5 h-16 w-16 opacity-60" viewBox="0 0 80 80" fill="none" aria-hidden="true">
         <circle cx="40" cy="40" r="36" stroke="#d1d5db" strokeWidth="2" fill="none" />
         <path d="M25 50L40 20L55 50H25Z" stroke="#9ca3af" strokeWidth="2" fill="none" />
         <circle cx="40" cy="55" r="4" stroke="#9ca3af" strokeWidth="2" fill="none" />
