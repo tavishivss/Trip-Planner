@@ -38,14 +38,15 @@ function LocationInput({ label, value, onChange, onSelect, placeholder, icon }) 
 
   const fetchSuggestions = useMemo(
     () => debounce(async (query) => {
-      if (query.length < 3) {
+      const search = query.trim();
+      if (search.length < 3) {
         setSuggestions([]);
         return;
       }
       setLoading(true);
       try {
         const resp = await axios.get(`${API_BASE}/api/geocode/`, {
-          params: { q: query },
+          params: { q: search },
         });
         setSuggestions(resp.data);
       } catch {
