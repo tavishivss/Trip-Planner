@@ -227,13 +227,12 @@
 }
 
 [data-theme='dark'] .empty-state-map {
-  background:
-    radial-gradient(circle at 50% 42%, rgba(37, 99, 235, 0.12), transparent 42%),
-    linear-gradient(180deg, #0b1120 0%, #111827 100%);
+  background: linear-gradient(180deg, #0b1120 0%, #111827 100%);
 }
 
 [data-theme='dark'] .empty-state-map::before {
-  opacity: 0.04;
+  filter: grayscale(1) saturate(0.15) contrast(1.25) brightness(1.35);
+  opacity: 0.16;
 }
 
 [data-theme='dark'] .empty-state-map::after {

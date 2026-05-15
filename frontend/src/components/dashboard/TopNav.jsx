@@ -2,14 +2,7 @@ import { useEffect, useState } from 'react';
 import { Moon, Sun, Truck } from 'lucide-react';
 
 function getInitialTheme() {
-  if (typeof window === 'undefined') return 'light';
-
-  const savedTheme = window.localStorage.getItem('trip-planner-theme');
-  if (savedTheme === 'dark' || savedTheme === 'light') {
-    return savedTheme;
-  }
-
-  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  return 'light';
 }
 
 export default function TopNav() {
@@ -17,7 +10,6 @@ export default function TopNav() {
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
-    window.localStorage.setItem('trip-planner-theme', theme);
   }, [theme]);
 
   return (
