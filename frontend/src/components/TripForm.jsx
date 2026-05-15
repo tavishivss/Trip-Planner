@@ -2,7 +2,7 @@ import { useMemo, useRef, useState } from 'react';
 import axios from 'axios';
 import { Flag, LoaderCircle, Map, MapPin, Package, Timer } from 'lucide-react';
 
-const API_BASE = 'http://localhost:8000';
+const API_BASE = import.meta.env.VITE_API_BASE_URL || (import.meta.env.DEV ? 'http://localhost:8000' : '/_/backend');
 
 const locationIcons = {
   current: MapPin,
