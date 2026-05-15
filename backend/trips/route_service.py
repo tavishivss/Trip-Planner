@@ -10,6 +10,8 @@ from typing import Optional
 
 OSRM_BASE = "https://router.project-osrm.org"
 NOMINATIM_BASE = "https://nominatim.openstreetmap.org"
+GEOCODE_TIMEOUT = (3, 5)
+ROUTE_TIMEOUT = (3, 8)
 
 
 def geocode(address: str) -> Optional[dict]:
@@ -23,7 +25,7 @@ def geocode(address: str) -> Optional[dict]:
                 "limit": 1,
             },
             headers={"User-Agent": "ELD-TripPlanner/1.0"},
-            timeout=10,
+            timeout=GEOCODE_TIMEOUT,
         )
         resp.raise_for_status()
         data = resp.json()
@@ -49,7 +51,7 @@ def geocode_suggestions(query: str, limit: int = 5) -> list:
                 "limit": limit,
             },
             headers={"User-Agent": "ELD-TripPlanner/1.0"},
-            timeout=10,
+            timeout=GEOCODE_TIMEOUT,
         )
         resp.raise_for_status()
         return [
@@ -75,11 +77,11 @@ def get_route(origin: dict, destination: dict) -> dict:
         resp = requests.get(
             f"{OSRM_BASE}/route/v1/driving/{coords}",
             params={
-                "overview": "full",
+                "overview": "simplified",
                 "geometries": "geojson",
                 "steps": "true",
             },
-            timeout=15,
+            timeout=ROUTE_TIMEOUT,
         )
         resp.raise_for_status()
         data = resp.json()

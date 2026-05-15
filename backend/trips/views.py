@@ -1,10 +1,16 @@
+from concurrent.futures import ThreadPoolExecutor
+from datetime import datetime
+
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-from datetime import datetime
 
 from .route_service import geocode, geocode_suggestions, get_route
 from .hos_engine import plan_trip, DutyStatus
+
+
+def _resolve_location(address, loc_data):
+    return loc_data if loc_data else geocode(address)
 
 
 @api_view(['POST'])
@@ -27,18 +33,14 @@ def plan_trip_view(request):
             status=status.HTTP_400_BAD_REQUEST
         )
 
-    if current_loc_data:
-        current_loc = current_loc_data
-    else:
-        current_loc = geocode(current_location)
-    if pickup_loc_data:
-        pickup_loc = pickup_loc_data
-    else:
-        pickup_loc = geocode(pickup_location)
-    if dropoff_loc_data:
-        dropoff_loc = dropoff_loc_data
-    else:
-        dropoff_loc = geocode(dropoff_location)
+    with ThreadPoolExecutor(max_workers=3) as executor:
+        current_future = executor.submit(_resolve_location, current_location, current_loc_data)
+        pickup_future = executor.submit(_resolve_location, pickup_location, pickup_loc_data)
+        dropoff_future = executor.submit(_resolve_location, dropoff_location, dropoff_loc_data)
+
+        current_loc = current_future.result()
+        pickup_loc = pickup_future.result()
+        dropoff_loc = dropoff_future.result()
 
     if not current_loc:
         return Response({'error': f'Could not geocode current location: {current_location}'},
@@ -50,8 +52,12 @@ def plan_trip_view(request):
         return Response({'error': f'Could not geocode dropoff location: {dropoff_location}'},
                         status=status.HTTP_400_BAD_REQUEST)
 
-    route_to_pickup = get_route(current_loc, pickup_loc)
-    route_to_dropoff = get_route(pickup_loc, dropoff_loc)
+    with ThreadPoolExecutor(max_workers=2) as executor:
+        route_to_pickup_future = executor.submit(get_route, current_loc, pickup_loc)
+        route_to_dropoff_future = executor.submit(get_route, pickup_loc, dropoff_loc)
+
+        route_to_pickup = route_to_pickup_future.result()
+        route_to_dropoff = route_to_dropoff_future.result()
 
     route_segments = [route_to_pickup, route_to_dropoff]
 
