@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { CalendarDays, Clock3, Download, Moon, Timer, Truck } from 'lucide-react';
 
-const TEMPLATE_SRC = '/blank-paper-log.png';
+const TEMPLATE_SRC = '/daily_log.png';
 
 const STATUS_ROWS = {
   off_duty: 0,
@@ -35,13 +35,13 @@ const DISPLAY_LOG = {
 };
 
 const PAPER_LOG = {
-  canvasWidth: 1026,
-  canvasHeight: 1036,
-  gridLeft: 112,
-  gridTop: 370,
-  rowHeight: 36,
+  canvasWidth: 1700,
+  canvasHeight: 2200,
+  gridLeft: 279,
+  gridTop: 576,
+  rowHeight: 51,
   totalHours: 24,
-  hourWidth: 796 / 24,
+  hourWidth: 1146 / 24,
 };
 
 const LINE_COLORS = {
@@ -287,10 +287,10 @@ function drawPaperTotals(ctx, log) {
 
   STATUS_KEYS.forEach((key, index) => {
     const y = PAPER_LOG.gridTop + index * PAPER_LOG.rowHeight + PAPER_LOG.rowHeight / 2 + 7;
-    write(ctx, (totals[key] || 0).toFixed(1), 960, y, {
+    write(ctx, (totals[key] || 0).toFixed(1), 1509, y, {
       align: 'center',
       color: LINE_COLORS[key],
-      size: 18,
+      size: 26,
       weight: '700',
     });
   });
@@ -304,11 +304,11 @@ function drawPaperRemarks(ctx, log) {
   ctx.fillStyle = '#0f172a';
   ctx.font = '600 14px "Inter", Arial, sans-serif';
 
-  let y = 578;
-  const maxY = 642;
+  let y = 970;
+  const maxY = 1085;
   for (const remark of remarks.slice(0, 8)) {
     if (y > maxY) break;
-    y = wrapLine(ctx, remark, 48, y, 890, 17, maxY);
+    y = wrapLine(ctx, remark, 350, y, 1210, 24, maxY);
   }
 
   ctx.restore();
@@ -332,13 +332,17 @@ function drawPaperLog(ctx, templateImage, log, dayNumber) {
   ctx.fillStyle = '#ffffff';
   ctx.fillRect(0, 0, PAPER_LOG.canvasWidth, PAPER_LOG.canvasHeight);
   ctx.drawImage(templateImage, 0, 0, PAPER_LOG.canvasWidth, PAPER_LOG.canvasHeight);
+  const [month = '', day = '', year = ''] = String(log.date_display || '').split('/');
+  write(ctx, month, 646, 377, { align: 'center', size: 26, weight: '700' });
+  write(ctx, day, 771, 377, { align: 'center', size: 26, weight: '700' });
+  write(ctx, year, 897, 377, { align: 'center', size: 26, weight: '700' });
   drawDutyLines(ctx, log.entries || [], PAPER_LOG, { horizontalWidth: 5, verticalWidth: 4 });
   drawPaperTotals(ctx, log);
   drawPaperRemarks(ctx, log);
-  write(ctx, `Day ${dayNumber}`, 914, 55, {
+  write(ctx, `Day ${dayNumber}`, 1375, 462, {
     align: 'right',
     color: '#475569',
-    size: 14,
+    size: 22,
     weight: '700',
   });
 }
