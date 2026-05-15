@@ -62,8 +62,6 @@ function DashboardHeader() {
         <h2 className="text-xl font-semibold tracking-normal text-slate-950 sm:text-2xl">
           Dispatch route planning
         </h2>
-        <p className="mt-1 max-w-xl text-xs leading-5 text-slate-500 sm:text-sm">
-        </p>
       </div>
     </div>
   );

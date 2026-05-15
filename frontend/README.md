@@ -1,16 +1,46 @@
-# React + Vite
+# ELD Trip Planner Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+React/Vite frontend for the ELD Trip Planner. It collects trip inputs, calls the Django API, renders the route map, and displays downloadable daily log sheets.
 
-Currently, two official plugins are available:
+## Main Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- Trip form for current location, pickup location, drop-off location, and current cycle hours
+- Location autocomplete backed by the backend geocode endpoint
+- Leaflet map with route lines and planned duty events
+- Trip summary with driving, on-duty, off-duty, fuel, break, and restart totals
+- Canvas-rendered daily log sheets with PDF download
 
-## React Compiler
+## Local Development
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Install dependencies:
 
-## Expanding the ESLint configuration
+```bash
+npm install
+```
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Start the dev server:
+
+```bash
+npm run dev
+```
+
+The frontend runs at `http://localhost:5173`.
+
+## API Configuration
+
+In development, API requests default to `http://localhost:8000`.
+
+In production, API requests default to `/_/backend`, matching the Vercel backend route prefix.
+
+To override the API URL, set:
+
+```bash
+VITE_API_BASE_URL=<backend-url>
+```
+
+## Useful Commands
+
+```bash
+npm run lint
+npm run build
+```
