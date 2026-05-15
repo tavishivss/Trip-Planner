@@ -15,7 +15,7 @@ const STATUS_KEYS = ['off_duty', 'sleeper_berth', 'driving', 'on_duty_not_drivin
 
 const DISPLAY_LOG = {
   gridLeft: 130,
-  gridTop: 55,
+  gridTop: 75,
   rowHeight: 44,
   rows: 4,
   totalHours: 24,
@@ -27,7 +27,7 @@ const DISPLAY_LOG = {
     return this.rows * this.rowHeight;
   },
   get canvasWidth() {
-    return this.gridLeft + this.gridWidth + 80;
+    return this.gridLeft + this.gridWidth + 150;
   },
   get canvasHeight() {
     return this.gridTop + this.gridHeight + 50;
@@ -497,10 +497,11 @@ export default function DailyLogSheet({ log, dayNumber }) {
             <button
               type="button"
               onClick={handleDownload}
-              className="inline-flex h-9 items-center gap-2 rounded-xl border border-blue-100 bg-blue-50 px-3 text-xs font-semibold text-blue-700 transition hover:-translate-y-0.5 hover:bg-blue-100"
+              aria-label={`Download day ${dayNumber} log PDF`}
+              title="Download log PDF"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-blue-100 bg-blue-50 text-blue-700 transition hover:-translate-y-0.5 hover:bg-blue-100"
             >
               <Download size={14} aria-hidden="true" />
-              Download
             </button>
           </div>
           <p className="mt-1 text-sm text-slate-500">Generated ELD daily duty-status grid</p>
