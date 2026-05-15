@@ -8,10 +8,10 @@ const STOP_COLORS = {
   start: '#16a34a',
   pickup: '#2563eb',
   dropoff: '#334155',
-  end: '#dc2626',
-  break: '#d97706',
+  end: '#0d9488',
+  break: '#9a8748',
   off_duty_reset: '#16a34a',
-  fuel: '#b45309',
+  fuel: '#9a8748',
 };
 
 const STOP_LABELS = {

@@ -1,13 +1,13 @@
 import { Activity, Clock3, ShieldCheck } from 'lucide-react';
 
 const dotClasses = {
-  driving: 'bg-red-600',
+  driving: 'dot-driving',
   pickup: 'bg-blue-600',
   dropoff: 'bg-slate-600',
-  fuel: 'bg-amber-600',
-  break: 'bg-amber-500',
+  fuel: 'dot-on-duty',
+  break: 'dot-on-duty',
   reset: 'bg-emerald-600',
-  duty: 'bg-amber-600',
+  duty: 'dot-on-duty',
   off: 'bg-blue-600',
 };
 
@@ -107,7 +107,7 @@ export default function TripSummary({ data }) {
                 <div key={shift.shift_number} className="space-y-2">
                   <div className="flex items-center justify-between text-xs">
                     <span className="font-semibold text-slate-700">Shift {shift.shift_number}</span>
-                    <span className={shift.driving_ok && shift.window_ok ? 'text-emerald-600' : 'text-red-600'}>
+                    <span className={shift.driving_ok && shift.window_ok ? 'text-emerald-600' : 'text-[#0d9488]'}>
                       {shift.driving_ok && shift.window_ok ? 'Compliant' : 'Review'}
                     </span>
                   </div>
@@ -117,7 +117,7 @@ export default function TripSummary({ data }) {
                         Drive {shift.driving_hours}/{shift.driving_limit}h
                       </span>
                       <div className="h-2 flex-1 overflow-hidden rounded-full bg-slate-200">
-                        <div className="h-full rounded-full bg-red-600" style={{ width: `${dPct}%` }} />
+                        <div className="h-full rounded-full progress-driving" style={{ width: `${dPct}%` }} />
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
@@ -125,7 +125,7 @@ export default function TripSummary({ data }) {
                         Window {shift.window_hours}/{shift.window_limit}h
                       </span>
                       <div className="h-2 flex-1 overflow-hidden rounded-full bg-slate-200">
-                        <div className="h-full rounded-full bg-amber-600" style={{ width: `${wPct}%` }} />
+                        <div className="h-full rounded-full progress-on-duty" style={{ width: `${wPct}%` }} />
                       </div>
                     </div>
                   </div>

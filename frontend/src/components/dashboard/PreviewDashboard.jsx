@@ -3,7 +3,7 @@ import { demoEvents, demoLogs } from '../../data/demoTrip';
 
 const eventTone = {
   blue: 'bg-blue-600',
-  amber: 'bg-amber-500',
+  amber: 'bg-[#9a8748]',
   slate: 'bg-slate-500',
   emerald: 'bg-emerald-500',
 };
@@ -27,7 +27,7 @@ export function EmptyRoutePreview() {
           <div className="relative h-72 overflow-hidden rounded-3xl bg-slate-100">
             <div className="absolute inset-x-8 top-16 h-1 rounded-full bg-blue-200" />
             <div className="absolute left-12 top-14 h-5 w-5 rounded-full border-4 border-white bg-blue-600 shadow-lg" />
-            <div className="absolute left-1/3 top-14 h-5 w-5 rounded-full border-4 border-white bg-amber-500 shadow-lg" />
+            <div className="absolute left-1/3 top-14 h-5 w-5 rounded-full border-4 border-white bg-[#9a8748] shadow-lg" />
             <div className="absolute right-16 top-14 h-5 w-5 rounded-full border-4 border-white bg-emerald-500 shadow-lg" />
             <div className="absolute left-20 top-28 h-32 w-px rotate-45 bg-slate-200" />
             <div className="absolute bottom-10 right-24 h-28 w-px -rotate-45 bg-slate-200" />

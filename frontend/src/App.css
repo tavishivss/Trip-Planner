@@ -72,6 +72,22 @@
   color: #86d0fd !important;
 }
 
+.progress-driving {
+  background: #0d9488;
+}
+
+.progress-on-duty {
+  background: #9a8748;
+}
+
+.dot-driving {
+  background: #0d9488;
+}
+
+.dot-on-duty {
+  background: #9a8748;
+}
+
 .kpi-icon-shell {
   display: inline-flex;
   width: 2.5rem;
@@ -127,15 +143,15 @@
 }
 
 .duty-pill-driving {
-  color: #b91c1c;
-  background: #fef2f2;
-  border: 1px solid rgba(252, 165, 165, 0.62);
+  color: #0d9488;
+  background: rgba(13, 148, 136, 0.11);
+  border: 1px solid rgba(13, 148, 136, 0.28);
 }
 
 .duty-pill-on-duty {
-  color: #b45309;
-  background: #fffbeb;
-  border: 1px solid rgba(252, 211, 77, 0.68);
+  color: #9a8748;
+  background: rgba(154, 135, 72, 0.12);
+  border: 1px solid rgba(154, 135, 72, 0.3);
 }
 
 [data-theme='dark'] .duty-pill-off {
@@ -151,15 +167,15 @@
 }
 
 [data-theme='dark'] .duty-pill-driving {
-  color: #fca5a5;
-  background: rgba(248, 113, 113, 0.14);
-  border-color: rgba(248, 113, 113, 0.3);
+  color: #0d9488;
+  background: rgba(13, 148, 136, 0.16);
+  border-color: rgba(13, 148, 136, 0.34);
 }
 
 [data-theme='dark'] .duty-pill-on-duty {
-  color: #fcd34d;
-  background: rgba(245, 158, 11, 0.14);
-  border-color: rgba(245, 158, 11, 0.3);
+  color: #9a8748;
+  background: rgba(154, 135, 72, 0.18);
+  border-color: rgba(154, 135, 72, 0.36);
 }
 
 [data-theme='dark'] body {

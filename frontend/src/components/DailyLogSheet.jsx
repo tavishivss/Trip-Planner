@@ -24,15 +24,15 @@ const CANVAS_HEIGHT = GRID_TOP + GRID_HEIGHT + 50;
 const LINE_COLORS = {
   off_duty: '#2563eb',
   sleeper_berth: '#64748b',
-  driving: '#dc2626',
-  on_duty_not_driving: '#d97706',
+  driving: '#0d9488',
+  on_duty_not_driving: '#9a8748',
 };
 
 const ROW_BGS = [
   'rgba(37, 99, 235, 0.06)',
   'rgba(100, 116, 139, 0.06)',
-  'rgba(220, 38, 38, 0.07)',
-  'rgba(217, 119, 6, 0.07)',
+  'rgba(13, 148, 136, 0.08)',
+  'rgba(154, 135, 72, 0.1)',
 ];
 
 function drawLogGrid(ctx, log, dayNumber) {
@@ -276,7 +276,7 @@ export default function DailyLogSheet({ log, dayNumber }) {
             </div>
             <div className="h-2 overflow-hidden rounded-full bg-slate-200">
               <div
-                className="h-full rounded-full bg-red-600 transition-all duration-500"
+                className="h-full rounded-full progress-driving transition-all duration-500"
                 style={{ width: `${Math.min(100, (hos.driving_hours / 24) * 100)}%` }}
               />
             </div>
@@ -291,7 +291,7 @@ export default function DailyLogSheet({ log, dayNumber }) {
             </div>
             <div className="h-2 overflow-hidden rounded-full bg-slate-200">
               <div
-                className="h-full rounded-full bg-amber-600 transition-all duration-500"
+                className="h-full rounded-full progress-on-duty transition-all duration-500"
                 style={{ width: `${Math.min(100, (hos.on_duty_hours / 24) * 100)}%` }}
               />
             </div>
