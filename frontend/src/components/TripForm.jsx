@@ -99,7 +99,7 @@ function LocationInput({ label, value, onChange, onSelect, placeholder, icon }) 
               <button
                 type="button"
                 onMouseDown={() => handleSelect(s)}
-                className="flex w-full items-start gap-3 rounded-xl px-3 py-2.5 text-left text-sm text-slate-600 transition hover:bg-blue-50 hover:text-slate-950"
+                className="city-suggestion flex w-full items-start gap-3 rounded-xl px-3 py-2.5 text-left text-sm text-slate-600 transition"
               >
                 <MapPin className="mt-0.5 shrink-0 text-slate-400" size={15} aria-hidden="true" />
                 <span className="leading-5">{s.name}</span>

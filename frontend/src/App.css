@@ -64,6 +64,44 @@
   box-shadow: 0 8px 18px rgba(37, 99, 235, 0.22);
 }
 
+.dashboard-tab {
+  border: 1px solid transparent;
+  transition: background-color 180ms ease, border-color 180ms ease, box-shadow 180ms ease, color 180ms ease, transform 180ms ease;
+}
+
+.dashboard-tab-inactive:hover {
+  background: rgba(255, 255, 255, 0.72);
+  color: #0f172a;
+  transform: translateY(-1px);
+}
+
+.city-suggestion {
+  border: 1px solid transparent;
+  transition: background-color 180ms ease, border-color 180ms ease, box-shadow 180ms ease, color 180ms ease, transform 180ms ease;
+}
+
+.city-suggestion:hover {
+  border-color: transparent;
+  background: #eff6ff;
+  color: #0f172a;
+  transform: translateY(-1px);
+}
+
+[data-theme='dark'] .dashboard-tab:hover,
+[data-theme='dark'] .city-suggestion:hover {
+  background: rgba(255, 255, 255, 0.06) !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+  color: #e5e7eb !important;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.16), 0 0 18px rgba(96, 165, 250, 0.08);
+  transform: translateY(-1px);
+}
+
+[data-theme='dark'] .dashboard-tab-active {
+  background: rgba(96, 165, 250, 0.12) !important;
+  border-color: rgba(96, 165, 250, 0.22) !important;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.14);
+}
+
 .theme-blue-accent {
   color: #2563eb;
 }
@@ -208,6 +246,12 @@
 [data-theme='dark'] .bg-slate-50,
 [data-theme='dark'] .bg-slate-100 {
   background-color: #172033 !important;
+}
+
+[data-theme='dark'] .dashboard-tab-active {
+  background-color: rgba(96, 165, 250, 0.12) !important;
+  border-color: rgba(96, 165, 250, 0.22) !important;
+  color: #86d0fd !important;
 }
 
 [data-theme='dark'] .text-slate-950,
