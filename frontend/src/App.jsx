@@ -31,7 +31,7 @@ function getDashboardKpis(tripData) {
       label: 'Trip length',
       value: tripData.daily_logs.length,
       unit: tripData.daily_logs.length === 1 ? 'day' : 'days',
-      hint: 'Generated ELD log sheets',
+      hint: 'ELD log sheets',
       icon: CalendarDays,
     },
     {
