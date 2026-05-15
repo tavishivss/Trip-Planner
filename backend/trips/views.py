@@ -208,7 +208,7 @@ def plan_trip_view(request):
 
 @api_view(['GET'])
 def geocode_search(request):
-    query = request.query_params.get('q', '')
+    query = request.query_params.get('q', '').strip()
     if len(query) < 2:
         return Response([])
     results = geocode_suggestions(query)
