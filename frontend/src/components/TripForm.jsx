@@ -157,7 +157,6 @@ export default function TripForm({ onSubmit, loading, setLoading, setError }) {
       <div className="flex items-start justify-between gap-4">
         <div>
           <h2 className="text-lg font-semibold text-slate-950">Trip Details</h2>
-          <p className="mt-1 text-sm text-slate-500">Build an HOS-compliant route plan.</p>
         </div>
       </div>
 

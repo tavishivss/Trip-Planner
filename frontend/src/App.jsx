@@ -17,7 +17,7 @@ function getDashboardKpis(tripData) {
       label: 'Total distance',
       value: tripData.route.total_distance_miles?.toLocaleString() || '0',
       unit: 'mi',
-      hint: 'Calculated across pickup and drop-off legs',
+      hint: 'Across pickup and drop-off legs',
       icon: Route,
     },
     {

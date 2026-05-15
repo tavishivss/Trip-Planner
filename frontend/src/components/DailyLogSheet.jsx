@@ -254,7 +254,7 @@ export default function DailyLogSheet({ log, dayNumber }) {
           <h3 className="mt-2 text-xl font-semibold text-slate-950">
             Day {dayNumber} - {log.total_miles > 0 ? `${log.total_miles} mi` : 'No driving'}
           </h3>
-          <p className="mt-1 text-sm text-slate-500">Generated ELD daily duty-status grid</p>
+          <p className="mt-1 text-sm text-slate-500">ELD daily duty-status grid</p>
         </div>
         <div className="flex flex-wrap gap-2 sm:justify-end">
           <span className="status-pill duty-pill-off">OFF {log.total_hours?.off_duty?.toFixed(1)}h</span>
