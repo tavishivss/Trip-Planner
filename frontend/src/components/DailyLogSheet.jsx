@@ -508,7 +508,7 @@ export default function DailyLogSheet({ log, dayNumber }) {
               <Download size={14} aria-hidden="true" />
             </button>
           </div>
-          <p className="mt-1 text-sm text-slate-500">Generated ELD daily duty-status grid</p>
+          <p className="mt-1 text-sm text-slate-500">ELD daily duty-status grid</p>
         </div>
         <div className="flex flex-wrap gap-2 sm:justify-end">
           <span className="status-pill duty-pill-off">OFF {log.total_hours?.off_duty?.toFixed(1)}h</span>
