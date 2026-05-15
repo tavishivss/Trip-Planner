@@ -157,7 +157,9 @@ def plan_trip_view(request):
         s['duration_hours'] for s in stops_data if s['stop_type'] == 'break'
     )
     reset_hrs = sum(
-        s['duration_hours'] for s in stops_data if s['stop_type'] == 'off_duty_reset'
+        s['duration_hours']
+        for s in stops_data
+        if s['stop_type'] in {'off_duty_reset', 'cycle_restart'}
     )
     total_on_duty = round(driving_hrs + pickup_hrs + dropoff_hrs + fuel_hrs, 2)
     total_off_duty = round(break_hrs + reset_hrs, 2)

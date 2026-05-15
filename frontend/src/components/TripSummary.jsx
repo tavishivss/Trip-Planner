@@ -27,7 +27,16 @@ export default function TripSummary({ data }) {
   const { stops, cycle_info, shifts, time_breakdown } = data;
 
   const breakStops = stops.filter((s) => s.stop_type === 'break');
-  const resetStops = stops.filter((s) => s.stop_type === 'off_duty_reset');
+  const resetStops = stops.filter((s) => ['off_duty_reset', 'cycle_restart'].includes(s.stop_type));
+  const cycleLimit = cycle_info?.cycle_limit || 70;
+  const cycleRestarts = cycle_info?.cycle_restarts || 0;
+  const priorCycleHours = cycleRestarts > 0 ? 0 : cycle_info?.cycle_start_used || 0;
+  const tripCycleHours = cycleRestarts > 0
+    ? cycle_info?.cycle_total_used || 0
+    : cycle_info?.cycle_added_this_trip || 0;
+  const cycleTripLabel = cycleRestarts > 0
+    ? `After restart: ${cycle_info.cycle_total_used}h`
+    : `Trip: ${cycle_info?.cycle_added_this_trip}h`;
 
   return (
     <section className="dashboard-card p-5 sm:p-6">
@@ -62,7 +71,7 @@ export default function TripSummary({ data }) {
             />
             <BreakdownRow
               tone="reset"
-              label={`Off-duty resets (${resetStops.length})`}
+              label={`Off-duty resets/restarts (${resetStops.length})`}
               value={`${time_breakdown.off_duty_resets} hrs`}
             />
             <BreakdownRow tone="off" label="Total off-duty" value={`${time_breakdown.total_off_duty} hrs`} total />
@@ -80,17 +89,17 @@ export default function TripSummary({ data }) {
             <div className="flex h-full">
               <div
                 className="h-full bg-slate-400 transition-all duration-500"
-                style={{ width: `${(cycle_info.cycle_start_used / cycle_info.cycle_limit) * 100}%` }}
+                style={{ width: `${Math.min(100, (priorCycleHours / cycleLimit) * 100)}%` }}
               />
               <div
                 className="h-full bg-blue-600 transition-all duration-500"
-                style={{ width: `${(cycle_info.cycle_added_this_trip / cycle_info.cycle_limit) * 100}%` }}
+                style={{ width: `${Math.min(100, (tripCycleHours / cycleLimit) * 100)}%` }}
               />
             </div>
           </div>
           <div className="mt-3 grid grid-cols-3 gap-2 text-xs text-slate-500">
             <span>Prior: {cycle_info.cycle_start_used}h</span>
-            <span className="text-center">Trip: {cycle_info.cycle_added_this_trip}h</span>
+            <span className="text-center">{cycleTripLabel}</span>
             <span className="text-right">Left: {cycle_info.cycle_remaining}h</span>
           </div>
         </div>

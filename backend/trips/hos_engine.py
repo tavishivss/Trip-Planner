@@ -5,7 +5,7 @@ Rules implemented (70hr/8day cycle, no adverse conditions):
 - 11-Hour Driving Limit per shift
 - 14-Hour Driving Window from start of duty (wall-clock)
 - 30-Minute Rest Break after 8 cumulative hours of driving
-- 70-Hour/8-Day On-Duty Limit (rolling)
+- 70-Hour/8-Day On-Duty Limit with a 34-hour restart when the cycle is exhausted
 - 10 consecutive hours off-duty required between shifts
 - Fueling stop every 1,000 miles
 - 1 hour for pickup, 1 hour for drop-off
@@ -79,6 +79,7 @@ MAX_WINDOW_HOURS = 14.0
 MANDATORY_BREAK_AFTER = 8.0
 MANDATORY_BREAK_DURATION = 0.5  # 30 minutes
 OFF_DUTY_RESET = 10.0
+CYCLE_RESTART = 34.0
 CYCLE_LIMIT = 70.0
 CYCLE_DAYS = 8
 FUEL_INTERVAL_MILES = 1000.0
@@ -95,10 +96,10 @@ def plan_trip(
     current_cycle_used: float,
     route_segments: list,
     start_time: Optional[datetime] = None,
-) -> Tuple[List[Stop], List['DailyLog'], dict]:
+) -> Tuple[List[Stop], List['DailyLog'], dict, list]:
     """
     Plan a trip with full HOS compliance.
-    Returns: (stops, daily_logs, cycle_info)
+    Returns: (stops, daily_logs, cycle_info, shifts_data)
     """
     if start_time is None:
         start_time = datetime.now().replace(minute=0, second=0, microsecond=0)
@@ -111,6 +112,8 @@ def plan_trip(
     driving_in_shift = 0.0
     driving_since_break = 0.0
     cycle_used = current_cycle_used
+    trip_on_duty_added = 0.0
+    cycle_restarts = 0
     total_miles_driven = 0.0
     on_duty_in_shift = 0.0
 
@@ -180,13 +183,12 @@ def plan_trip(
 
     def ensure_window_for(needed_hours, location, lat, lng, reason):
         """Ensure enough 14-hr window and cycle time for an on-duty activity."""
-        nonlocal clock, shift_start, driving_in_shift, driving_since_break, on_duty_in_shift
-        if remaining_window() < needed_hours or needs_shift_reset():
+        if remaining_cycle() < needed_hours:
+            do_cycle_restart(location, lat, lng,
+                             f"34-hr restart — cycle limit ({reason})")
+        elif remaining_window() < needed_hours or needs_shift_reset():
             do_off_duty_reset(location, lat, lng,
                               f"10-hr off-duty reset — {reason}")
-        if remaining_cycle() < needed_hours:
-            do_off_duty_reset(location, lat, lng,
-                              f"10-hr off-duty reset — cycle limit ({reason})")
 
     def do_off_duty_reset(location, lat, lng, reason="10-hr off-duty reset"):
         nonlocal clock, shift_start, driving_in_shift, driving_since_break, on_duty_in_shift
@@ -214,6 +216,35 @@ def plan_trip(
         driving_since_break = 0.0
         on_duty_in_shift = 0.0
 
+    def do_cycle_restart(location, lat, lng, reason="34-hr restart — cycle limit reached"):
+        nonlocal clock, shift_start, driving_in_shift, driving_since_break
+        nonlocal on_duty_in_shift, cycle_used, cycle_restarts
+        if driving_in_shift > 0 or on_duty_in_shift > 0:
+            close_shift()
+        start = clock
+        clock = clock + timedelta(hours=CYCLE_RESTART)
+        log_entries.append(LogEntry(
+            status=DutyStatus.OFF_DUTY,
+            start_time=start,
+            end_time=clock,
+            location=location,
+            remarks=reason,
+        ))
+        stops.append(Stop(
+            location=location, lat=lat, lng=lng,
+            stop_type='cycle_restart',
+            arrival_time=start, departure_time=clock,
+            duration_hours=CYCLE_RESTART,
+            cumulative_miles=total_miles_driven,
+            remarks=reason,
+        ))
+        shift_start = clock
+        driving_in_shift = 0.0
+        driving_since_break = 0.0
+        on_duty_in_shift = 0.0
+        cycle_used = 0.0
+        cycle_restarts += 1
+
     def do_30min_break(location, lat, lng):
         nonlocal clock, driving_since_break
         start = clock
@@ -237,7 +268,7 @@ def plan_trip(
         driving_since_break = 0.0
 
     def do_on_duty(hours, location, lat, lng, reason, stop_type):
-        nonlocal clock, on_duty_in_shift, cycle_used
+        nonlocal clock, on_duty_in_shift, cycle_used, trip_on_duty_added
         start = clock
         clock = clock + timedelta(hours=hours)
         log_entries.append(LogEntry(
@@ -249,6 +280,7 @@ def plan_trip(
         ))
         on_duty_in_shift += hours
         cycle_used += hours
+        trip_on_duty_added += hours
         stops.append(Stop(
             location=location, lat=lat, lng=lng,
             stop_type=stop_type,
@@ -259,8 +291,11 @@ def plan_trip(
         ))
 
     def do_fuel_stop(location, lat, lng):
-        nonlocal clock, on_duty_in_shift, cycle_used
-        if remaining_window() < FUEL_STOP_DURATION:
+        nonlocal clock, on_duty_in_shift, cycle_used, trip_on_duty_added
+        if remaining_cycle() < FUEL_STOP_DURATION:
+            do_cycle_restart(location, lat, lng,
+                             "34-hr restart — cycle limit before fueling")
+        elif remaining_window() < FUEL_STOP_DURATION:
             do_off_duty_reset(location, lat, lng,
                               "10-hr off-duty reset — window exhausted before fueling")
         start = clock
@@ -274,6 +309,7 @@ def plan_trip(
         ))
         on_duty_in_shift += FUEL_STOP_DURATION
         cycle_used += FUEL_STOP_DURATION
+        trip_on_duty_added += FUEL_STOP_DURATION
         stops.append(Stop(
             location=location, lat=lat, lng=lng,
             stop_type='fuel',
@@ -318,12 +354,20 @@ def plan_trip(
 
         while leg_miles_driven < leg_distance - 0.1:
             # Check if a full shift reset is needed
-            if needs_shift_reset() or needs_cycle_reset():
+            if needs_cycle_reset():
+                frac = leg_miles_driven / leg_distance if leg_distance > 0 else 0
+                lat, lng = interpolate_position(leg, frac)
+                do_cycle_restart(
+                    f"Mile {total_miles_driven:.0f}", lat, lng,
+                    "34-hr restart — cycle limit reached")
+                continue
+
+            if needs_shift_reset():
                 frac = leg_miles_driven / leg_distance if leg_distance > 0 else 0
                 lat, lng = interpolate_position(leg, frac)
                 do_off_duty_reset(
                     f"Mile {total_miles_driven:.0f}", lat, lng,
-                    "10-hr off-duty reset — shift/cycle limit reached")
+                    "10-hr off-duty reset — shift limit reached")
                 continue
 
             available = drivable_hours()
@@ -338,9 +382,14 @@ def plan_trip(
             if available <= 0.01:
                 frac = leg_miles_driven / leg_distance if leg_distance > 0 else 0
                 lat, lng = interpolate_position(leg, frac)
-                do_off_duty_reset(
-                    f"Mile {total_miles_driven:.0f}", lat, lng,
-                    "10-hr off-duty reset — no drivable hours")
+                if remaining_cycle() <= 0.01:
+                    do_cycle_restart(
+                        f"Mile {total_miles_driven:.0f}", lat, lng,
+                        "34-hr restart — no cycle hours available")
+                else:
+                    do_off_duty_reset(
+                        f"Mile {total_miles_driven:.0f}", lat, lng,
+                        "10-hr off-duty reset — no drivable hours")
                 continue
 
             remaining_leg = leg_distance - leg_miles_driven
@@ -377,6 +426,7 @@ def plan_trip(
             driving_since_break += drive_hours
             on_duty_in_shift += drive_hours
             cycle_used += drive_hours
+            trip_on_duty_added += drive_hours
             total_miles_driven += drive_miles
             leg_miles_driven += drive_miles
             miles_since_fuel += drive_miles
@@ -419,9 +469,10 @@ def plan_trip(
         'cycle_limit': CYCLE_LIMIT,
         'cycle_days': CYCLE_DAYS,
         'cycle_start_used': current_cycle_used,
-        'cycle_added_this_trip': round(cycle_used - current_cycle_used, 2),
+        'cycle_added_this_trip': round(trip_on_duty_added, 2),
         'cycle_total_used': round(cycle_used, 2),
         'cycle_remaining': round(max(0, CYCLE_LIMIT - cycle_used), 2),
+        'cycle_restarts': cycle_restarts,
     }
 
     # Serialize shifts

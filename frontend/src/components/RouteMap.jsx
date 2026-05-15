@@ -11,6 +11,7 @@ const STOP_COLORS = {
   end: '#0d9488',
   break: '#9a8748',
   off_duty_reset: '#16a34a',
+  cycle_restart: '#0d9488',
   fuel: '#9a8748',
 };
 
@@ -21,6 +22,7 @@ const STOP_LABELS = {
   end: 'End',
   break: '30-min Break',
   off_duty_reset: '10-hr Off-Duty',
+  cycle_restart: '34-hr Restart',
   fuel: 'Fuel',
 };
 
@@ -31,6 +33,7 @@ const STOP_ICONS = {
   end: 'E',
   break: 'B',
   off_duty_reset: 'R',
+  cycle_restart: '34',
   fuel: 'F',
 };
 
@@ -41,6 +44,7 @@ const timelineIcons = {
   end: MapPin,
   break: Timer,
   off_duty_reset: Moon,
+  cycle_restart: Moon,
   fuel: Fuel,
 };
 
