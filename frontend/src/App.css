@@ -225,12 +225,6 @@
   background-color: #0b1120 !important;
 }
 
-[data-theme='dark'] header {
-  background: rgba(15, 23, 42, 0.76) !important;
-  border-color: rgba(51, 65, 85, 0.72) !important;
-  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.22);
-}
-
 [data-theme='dark'] .dashboard-card,
 [data-theme='dark'] .soft-card,
 [data-theme='dark'] .bg-white {

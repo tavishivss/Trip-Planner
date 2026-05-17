@@ -13,7 +13,7 @@ export default function TopNav() {
   }, [theme]);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-slate-200/60 bg-white/70 shadow-[0_10px_30px_rgba(15,23,42,0.035)] backdrop-blur-xl">
+    <header>
       <div className="mx-auto flex max-w-[1760px] items-center justify-between gap-6 px-5 py-3.5 sm:px-8 lg:px-10">
         <div className="flex min-w-0 items-center gap-4">
           <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 to-blue-700 text-white shadow-lg shadow-blue-600/20 ring-1 ring-blue-400/20">
