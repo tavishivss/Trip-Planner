@@ -80,9 +80,9 @@ function EmptyState() {
       <h2 className="text-2xl font-semibold leading-tight tracking-normal text-slate-950 sm:text-3xl">
         Plan Your Trip
       </h2>
-      <p className="mt-3 max-w-xl text-sm leading-6 text-slate-600 sm:text-base">
+      {/* <p className="mt-3 max-w-xl text-sm leading-6 text-slate-600 sm:text-base">
          Build compliant routes with intelligent trip planning and automated ELD log generation.
-      </p>
+      </p> */}
     </div>
   );
 }
